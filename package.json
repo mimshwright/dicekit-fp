@@ -45,6 +45,7 @@
     }
   ],
   "devDependencies": {
+    "@babel/plugin-proposal-pipeline-operator": "^7.12.1",
     "@size-limit/preset-small-lib": "^4.6.0",
     "husky": "^4.3.0",
     "size-limit": "^4.6.0",

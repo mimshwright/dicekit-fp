@@ -1,6 +1,7 @@
-export const sum = (a: number, b: number) => {
-  if ('development' === process.env.NODE_ENV) {
-    console.log('boop');
-  }
-  return a + b;
-};
+const r = Math.random;
+
+export const randomNumberBetween = (high: number, low = 0) =>
+  r() * (high - low) + low;
+
+export const randomIntegerBetween = (high: number, low = 0) =>
+  Math.round(randomNumberBetween(high, low));

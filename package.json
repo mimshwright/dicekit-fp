@@ -1,14 +1,17 @@
 {
+  "name": "dicekit",
   "version": "0.1.0",
   "license": "MIT",
+  "author": "Mims Wright",
   "main": "dist/index.js",
+  "module": "dist/dicekit.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "scripts": {
     "start": "tsdx watch",
@@ -20,20 +23,41 @@
     "analyze": "size-limit --why"
   },
   "peerDependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-partial-application": "^7.12.1",
+    "@babel/plugin-proposal-pipeline-operator": "^7.12.1",
+    "@size-limit/preset-small-lib": "^4.6.0",
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@typescript-eslint/parser": "^4.5.0",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.13.0",
+    "eslint-config-react-app": "^5.2.1",
+    "eslint-import-resolver-ts": "^0.4.2",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-ramda": "^2.5.1",
+    "eslint-plugin-react": "^7.21.4",
+    "eslint-plugin-react-hooks": "^4.1.2",
+    "husky": "^4.3.0",
+    "prettier": "^2.1.2",
+    "size-limit": "^4.6.0",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.0.3",
+    "typescript": "^4.0.3"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "tsdx lint"
     }
   },
   "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
+    "trailingComma": "es5",
+    "singleQuote": false
   },
-  "name": "dicekit",
-  "author": "Mims Wright",
-  "module": "dist/dicekit.esm.js",
   "size-limit": [
     {
       "path": "dist/dicekit.cjs.production.min.js",
@@ -43,14 +67,5 @@
       "path": "dist/dicekit.esm.js",
       "limit": "10 KB"
     }
-  ],
-  "devDependencies": {
-    "@babel/plugin-proposal-pipeline-operator": "^7.12.1",
-    "@size-limit/preset-small-lib": "^4.6.0",
-    "husky": "^4.3.0",
-    "size-limit": "^4.6.0",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.0.3",
-    "typescript": "^4.0.3"
-  }
+  ]
 }

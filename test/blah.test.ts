@@ -1,4 +1,4 @@
-import { randomIntegerBetween } from '../src';
+import { randomIntegerBetween } from "../src";
 
 const callMultipleTimes = (times: number) => (func: () => any) =>
   new Array(times).fill(0).map(func);
@@ -11,8 +11,8 @@ const min = (nums: number[]) =>
 
 // Test the test utils.
 
-describe('testUtils', () => {
-  describe('callMultipleTimes()', () => {
+describe("testUtils", () => {
+  describe("callMultipleTimes()", () => {
     let x = 0;
     const testFunc = () => {
       x += 1;
@@ -23,14 +23,14 @@ describe('testUtils', () => {
     expect(x).toBe(10);
   });
 
-  describe('min()', () => {
-    it('Returns the minimum value in a number[].', () => {
+  describe("min()", () => {
+    it("Returns the minimum value in a number[].", () => {
       expect(min([9, 50, 7, 1, -13, 102])).toBe(-13);
     });
   });
 
-  describe('max()', () => {
-    it('Returns the maximum value in a number[].', () => {
+  describe("max()", () => {
+    it("Returns the maximum value in a number[].", () => {
       expect(max([9, 50, 7, 1, -13, 102])).toBe(102);
     });
   });
@@ -38,31 +38,38 @@ describe('testUtils', () => {
 
 // Test the main library.
 
-describe('dicekit', () => {
-  describe('randomIntegerBetween()', () => {
-    it('Creates random numbers in a range.', () => {
+describe("dicekit", () => {
+  describe("randomIntegerBetween()", () => {
+    it("Creates random numbers in a range.", () => {
       const results = callMultipleTimes(500)(() =>
-        randomIntegerBetween(50, 10)
+        randomIntegerBetween(50, 10),
       );
 
       expect(min(results)).toBe(10);
       expect(max(results)).toBe(50);
     });
 
-    it('Low value defaults to 0.', () => {
+    it("Low value defaults to 0.", () => {
       const results = callMultipleTimes(100)(() => randomIntegerBetween(10));
 
       expect(min(results)).toBe(0);
       expect(max(results)).toBe(10);
     });
 
-    it('Negative numbers work.', () => {
+    it("Negative numbers work.", () => {
       const results = callMultipleTimes(500)(() =>
-        randomIntegerBetween(-10, -50)
+        randomIntegerBetween(-10, -50),
       );
 
       expect(min(results)).toBe(-50);
       expect(max(results)).toBe(-10);
+    });
+
+    it("Range is inclusive.", () => {
+      const results = callMultipleTimes(50)(() => randomIntegerBetween(1, 2));
+
+      expect(min(results)).toBe(1);
+      expect(max(results)).toBe(2);
     });
   });
 });

@@ -24,6 +24,8 @@ const callAndAdd = (modifier: number) => (
   func: NumberFunction,
 ): NumberFunction => () => func() + modifier;
 
+export const random = r;
+
 export const randomNumberBetween = (high: number, low = 0): number =>
   r() * (high - low) + low;
 

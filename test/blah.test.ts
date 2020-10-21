@@ -1,4 +1,5 @@
 import {
+  random,
   addToRoll,
   callMultipleTimes,
   randomBoolean,
@@ -45,10 +46,20 @@ describe("test utils", () => {
 
 describe("dicekit", () => {
   describe("[WARNING: In rare cases, these tests can fail due to random values. Please test again if this happens!]", () => {
+    describe("random()", () => {
+      it("Returns a value between 0 and 1", () => {
+        const results = callMultipleTimes(500)(random);
+
+        expect(min(results)).toBeGreaterThan(0);
+        expect(max(results)).toBeLessThan(1);
+      });
+    });
+
     describe("randomIntegerBetween()", () => {
       it("Creates random numbers in a range.", () => {
-        const test = () => randomIntegerBetween(50, 10);
-        const results = callMultipleTimes(500)(test);
+        const results = callMultipleTimes(500)(() =>
+          randomIntegerBetween(50, 10),
+        );
 
         expect(min(results)).toBe(10);
         expect(max(results)).toBe(50);
@@ -143,22 +154,22 @@ describe("dicekit", () => {
         expect(max(flips)).toBe(20);
       });
     });
-  });
 
-  describe("addToRoll()", () => {
-    it("Takes a function that returns a number. When called, it calls the function and adds a constant value to the result.", () => {
-      const d6 = createDie(6);
-      const plus2 = addToRoll(2);
-      const d6plus2 = plus2(d6);
-      const results = callMultipleTimes(5000)(d6plus2);
-      expect(min(results)).toBe(3);
-      expect(max(results)).toBe(8);
+    describe("addToRoll()", () => {
+      it("Takes a function that returns a number. When called, it calls the function and adds a constant value to the result.", () => {
+        const d6 = createDie(6);
+        const plus2 = addToRoll(2);
+        const d6plus2 = plus2(d6);
+        const results = callMultipleTimes(5000)(d6plus2);
+        expect(min(results)).toBe(3);
+        expect(max(results)).toBe(8);
 
-      const multipleD6 = multipleDice(d6);
-      const d6x3plus2 = plus2(multipleD6(3));
-      const resultsMultiple = callMultipleTimes(5000)(d6x3plus2);
-      expect(min(resultsMultiple)).toBe(5);
-      expect(max(resultsMultiple)).toBe(20);
+        const multipleD6 = multipleDice(d6);
+        const d6x3plus2 = plus2(multipleD6(3));
+        const resultsMultiple = callMultipleTimes(5000)(d6x3plus2);
+        expect(min(resultsMultiple)).toBe(5);
+        expect(max(resultsMultiple)).toBe(20);
+      });
     });
   });
 });

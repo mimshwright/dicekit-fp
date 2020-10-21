@@ -15,6 +15,12 @@ const max = (nums: number[]) =>
 const min = (nums: number[]) =>
   nums.reduce((a, b) => Math.min(a, b), Number.POSITIVE_INFINITY);
 
+const testRoll = callMultipleTimes;
+
+const testRollSm = testRoll(200);
+const testRollMed = testRoll(1000);
+const testRollLrg = testRoll(5000);
+
 // Test the test utils.
 
 describe("test utils", () => {
@@ -45,10 +51,10 @@ describe("test utils", () => {
 // Test the main library.
 
 describe("dicekit", () => {
-  describe("[WARNING: In rare cases, these tests can fail due to random values. Please test again if this happens!]", () => {
+  describe("[WARNING: In rare cases, these tests can fail due to random values. Please test again if this happens or raise the number of testRolls!]", () => {
     describe("random()", () => {
       it("Returns a value between 0 and 1", () => {
-        const results = callMultipleTimes(500)(random);
+        const results = testRollMed(random);
 
         expect(min(results)).toBeGreaterThan(0);
         expect(max(results)).toBeLessThan(1);
@@ -57,34 +63,28 @@ describe("dicekit", () => {
 
     describe("randomIntegerBetween()", () => {
       it("Creates random numbers in a range.", () => {
-        const results = callMultipleTimes(500)(() =>
-          randomIntegerBetween(50, 10),
-        );
+        const results = testRollMed(() => randomIntegerBetween(50, 10));
 
         expect(min(results)).toBe(10);
         expect(max(results)).toBe(50);
       });
 
       it("Low value defaults to 0.", () => {
-        const results = callMultipleTimes(500)(() => randomIntegerBetween(10));
+        const results = testRollMed(() => randomIntegerBetween(10));
 
         expect(min(results)).toBe(0);
         expect(max(results)).toBe(10);
       });
 
       it("Negative numbers work.", () => {
-        const results = callMultipleTimes(500)(() =>
-          randomIntegerBetween(-10, -50),
-        );
+        const results = testRollMed(() => randomIntegerBetween(-10, -50));
 
         expect(min(results)).toBe(-50);
         expect(max(results)).toBe(-10);
       });
 
       it("Range is inclusive.", () => {
-        const results = callMultipleTimes(100)(() =>
-          randomIntegerBetween(1, 2),
-        );
+        const results = testRollSm(() => randomIntegerBetween(1, 2));
 
         expect(min(results)).toBe(1);
         expect(max(results)).toBe(2);
@@ -93,10 +93,8 @@ describe("dicekit", () => {
 
     describe("randomInteger()", () => {
       it("Is a unary form of randomIntegerBetween()", () => {
-        const results = callMultipleTimes(500)(() => randomInteger(10));
-        const resultsBetween = callMultipleTimes(500)(() =>
-          randomIntegerBetween(10, 0),
-        );
+        const results = testRollMed(() => randomInteger(10));
+        const resultsBetween = testRollMed(() => randomIntegerBetween(10, 0));
 
         expect(min(results)).toBe(min(resultsBetween));
         expect(max(results)).toBe(max(resultsBetween));
@@ -104,7 +102,7 @@ describe("dicekit", () => {
     });
     describe("randomBoolean()", () => {
       it("Is syntactic sugar for randomIntegerBetween(0,1) coerced to a boolean value", () => {
-        const results = callMultipleTimes(100)(randomBoolean);
+        const results = testRoll(100)(randomBoolean);
         const trueCount = results.filter((b) => b === true).length;
         const falseCount = results.filter((b) => b === false).length;
 
@@ -116,7 +114,7 @@ describe("dicekit", () => {
     describe("createDie()", () => {
       it("Returns a function that generates random numbers between 1 and 'sides'", () => {
         const d6 = createDie(6);
-        const results = callMultipleTimes(200)(d6);
+        const results = testRollSm(d6);
 
         expect(d6).toBeInstanceOf(Function);
         expect(min(results)).toBe(1);
@@ -124,7 +122,7 @@ describe("dicekit", () => {
       });
       it("Range is inclusive'", () => {
         const coinFlip = createDie(2);
-        const results = callMultipleTimes(50)(coinFlip);
+        const results = testRollSm(coinFlip);
 
         expect(min(results)).toBe(1);
         expect(max(results)).toBe(2);
@@ -136,7 +134,7 @@ describe("dicekit", () => {
         const d6 = createDie(6);
         const multipleD6 = multipleDice(d6);
         const d6x3 = multipleD6(3);
-        const results = callMultipleTimes(5000)(d6x3);
+        const results = testRollLrg(d6x3);
 
         expect(multipleD6).toBeInstanceOf(Function);
         expect(d6x3).toBeInstanceOf(Function);
@@ -148,7 +146,7 @@ describe("dicekit", () => {
 
         const coin = createDie(2);
         const coinx10 = multipleDice(coin)(10);
-        const flips = callMultipleTimes(5000)(coinx10);
+        const flips = testRollLrg(coinx10);
 
         expect(min(flips)).toBe(10);
         expect(max(flips)).toBe(20);
@@ -160,13 +158,13 @@ describe("dicekit", () => {
         const d6 = createDie(6);
         const plus2 = addToRoll(2);
         const d6plus2 = plus2(d6);
-        const results = callMultipleTimes(5000)(d6plus2);
+        const results = testRollLrg(d6plus2);
         expect(min(results)).toBe(3);
         expect(max(results)).toBe(8);
 
         const multipleD6 = multipleDice(d6);
         const d6x3plus2 = plus2(multipleD6(3));
-        const resultsMultiple = callMultipleTimes(5000)(d6x3plus2);
+        const resultsMultiple = testRollLrg(d6x3plus2);
         expect(min(resultsMultiple)).toBe(5);
         expect(max(resultsMultiple)).toBe(20);
       });

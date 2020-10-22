@@ -4,7 +4,7 @@ type RollFunction = NumberFunction;
 
 const r = Math.random;
 
-const sum = (a: number, b: number): number => a + b;
+const sum = (a: number, b: number) => a + b;
 
 const sumArray = (arr: number[]) => arr.reduce(sum, 0);
 
@@ -47,4 +47,13 @@ export const multipleDice = (die: RollFunction) => (
   multiplier: number,
 ): RollFunction => () => sumArray(callMultipleTimes(multiplier)(die));
 
+export const constant = (a: number): RollFunction => () => a;
+
 export const addToRoll = callAndAdd;
+
+export const combineDice = (dice: RollFunction[]): RollFunction => {
+  if (dice.length === 0) {
+    throw new Error("The dice array must contain at least one roll function.");
+  }
+  return () => dice.reduce((acc: number, roll) => acc + roll(), 0);
+};

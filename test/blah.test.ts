@@ -1,4 +1,5 @@
 import {
+  constant,
   random,
   addToRoll,
   callMultipleTimes,
@@ -7,6 +8,7 @@ import {
   randomInteger,
   createDie,
   multipleDice,
+  combineDice,
 } from "../src/index";
 
 const max = (nums: number[]) =>
@@ -20,6 +22,7 @@ const testRoll = callMultipleTimes;
 const testRollSm = testRoll(200);
 const testRollMed = testRoll(1000);
 const testRollLrg = testRoll(5000);
+const testRollXLrg = testRoll(100000);
 
 // Test the test utils.
 
@@ -153,6 +156,17 @@ describe("dicekit", () => {
       });
     });
 
+    describe("constant()", () => {
+      it("Takes a number value and returns a function that always returns that number. K-combinator", () => {
+        const one = constant(1);
+
+        expect(one).toBeInstanceOf(Function);
+        expect(one()).toBe(1);
+        expect(constant(0)()).toBe(0);
+        expect(constant(999)()).toBe(999);
+      });
+    });
+
     describe("addToRoll()", () => {
       it("Takes a function that returns a number. When called, it calls the function and adds a constant value to the result.", () => {
         const d6 = createDie(6);
@@ -167,6 +181,52 @@ describe("dicekit", () => {
         const resultsMultiple = testRollLrg(d6x3plus2);
         expect(min(resultsMultiple)).toBe(5);
         expect(max(resultsMultiple)).toBe(20);
+      });
+    });
+
+    describe("combineDice()", () => {
+      describe("Takes an array of dice roll functions and returns one that combines the results of all.", () => {
+        it("Is a function that returns a function.", () => {
+          const one = constant(1);
+          const combined = combineDice([one]);
+
+          expect(combineDice).toBeInstanceOf(Function);
+          expect(combined).toBeInstanceOf(Function);
+          expect(combined()).toBe(1);
+        });
+
+        it("Array must not be empty", () => {
+          expect(() => {
+            combineDice([]);
+          }).toThrow();
+        });
+
+        it("Combines dice functions. Functions must be in the form `() => number`", () => {
+          const d6 = createDie(6);
+          const plus2 = constant(2);
+
+          const _2d6plus2 = combineDice([d6, d6, plus2]);
+          expect(_2d6plus2).toBeInstanceOf(Function);
+
+          const results = testRollMed(_2d6plus2);
+          expect(min(results)).toBe(4);
+          expect(max(results)).toBe(14);
+
+          const d8 = createDie(8);
+          const d12 = createDie(12);
+          const _2d12 = multipleDice(d12)(2);
+          const _2d12plus3 = addToRoll(3)(_2d12);
+
+          const _2d12plus3plus1d8minus5 = combineDice([
+            _2d12plus3,
+            d8,
+            constant(-5),
+          ]);
+
+          const results2 = testRollXLrg(_2d12plus3plus1d8minus5);
+          expect(min(results2)).toBe(2 + 3 + 1 - 5);
+          expect(max(results2)).toBe(2 * 12 + 3 + 8 - 5);
+        });
       });
     });
   });

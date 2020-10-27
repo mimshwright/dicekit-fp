@@ -1,15 +1,16 @@
 import {
   constant,
-  random,
   addToRoll,
   callMultipleTimes,
+  random,
   randomBoolean,
   randomIntegerBetween,
   randomInteger,
   createDie,
+  createDice,
   multipleDice,
   combineDice,
-  createDice,
+  parseDiceString,
 } from "../src/index";
 
 const max = (nums: number[]) =>
@@ -252,6 +253,86 @@ describe("dicekit", () => {
           const results2 = testRollXLrg(_2d12plus3plus1d8minus5);
           expect(min(results2)).toBe(2 + 3 + 1 - 5);
           expect(max(results2)).toBe(2 * 12 + 3 + 8 - 5);
+        });
+      });
+    });
+
+    describe("parseDiceString()", () => {
+      const p = parseDiceString;
+      describe("Takes strings in the format `NdS+K` and converts to a dice rolling function. e.g. 2d6+4 => Roll 2x 6-sided dice and add +4 to the result. ", () => {
+        it("Basic function", () => {
+          const _2d6plus4 = p("2d6+4");
+
+          const result = testRollLrg(_2d6plus4);
+          expect(min(result)).toBe(2 * 1 + 4);
+          expect(max(result)).toBe(2 * 6 + 4);
+        });
+
+        it("Whitespace ignored.", () => {
+          const _2d6plus4 = p(`2 d6    + 
+          4`);
+
+          const result = testRollLrg(_2d6plus4);
+          expect(min(result)).toBe(2 * 1 + 4);
+          expect(max(result)).toBe(2 * 6 + 4);
+        });
+
+        it("Case insensitive.", () => {
+          const _2d6plus4 = p(`2D6+4`);
+
+          const result = testRollLrg(_2d6plus4);
+          expect(min(result)).toBe(2 * 1 + 4);
+          expect(max(result)).toBe(2 * 6 + 4);
+        });
+
+        it("Negative modifiers work as expected", () => {
+          const _3d6minus2 = p("3d6-2");
+
+          const result = testRollLrg(_3d6minus2);
+          expect(min(result)).toBe(3 * 1 - 2);
+          expect(max(result)).toBe(3 * 6 - 2);
+        });
+        it("Multiple modifiers are all summed", () => {
+          const _2d6plus4 = p("2d6+2+1+1");
+
+          const result = testRollLrg(_2d6plus4);
+          expect(min(result)).toBe(2 * 1 + 4);
+          expect(max(result)).toBe(2 * 6 + 4);
+        });
+        it("Modifiers can come before the dice.", () => {
+          const _2d6plus4 = p("4+2d6");
+
+          const result = testRollLrg(_2d6plus4);
+          expect(min(result)).toBe(2 * 1 + 4);
+          expect(max(result)).toBe(2 * 6 + 4);
+        });
+
+        it("Dice can be split up.", () => {
+          const _2d6plus4 = p("1d6+2+1d6+2");
+
+          const result = testRollLrg(_2d6plus4);
+          expect(min(result)).toBe(2 * 1 + 4);
+          expect(max(result)).toBe(2 * 6 + 4);
+        });
+
+        it("Multiplier assumed to be 1 if not specified", () => {
+          const _d6plus2 = p("d6+2");
+
+          const result = testRollLrg(_d6plus2);
+          expect(min(result)).toBe(1 * 1 + 2);
+          expect(max(result)).toBe(1 * 6 + 2);
+        });
+
+        it("Modifier optional.", () => {
+          const _2d6 = p("2d6");
+          const result = testRollLrg(_2d6);
+          expect(min(result)).toBe(2 * 1);
+          expect(max(result)).toBe(2 * 6);
+
+          const _2d6plus2d12 = p("2d6+2d12");
+          const result2 = testRollLrg(_2d6plus2d12);
+          expect(min(result2)).toBe(2 * 1 + 2 * 1);
+          expect(max(result2)).toBe(2 * 6 + 2 * 12);
         });
       });
     });

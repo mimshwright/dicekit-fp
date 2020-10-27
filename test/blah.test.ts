@@ -9,6 +9,7 @@ import {
   createDie,
   multipleDice,
   combineDice,
+  createDice,
 } from "../src/index";
 
 const max = (nums: number[]) =>
@@ -181,6 +182,31 @@ describe("dicekit", () => {
         const resultsMultiple = testRollLrg(d6x3plus2);
         expect(min(resultsMultiple)).toBe(5);
         expect(max(resultsMultiple)).toBe(20);
+      });
+    });
+
+    describe("createDice()", () => {
+      describe("Creates multiple dice (all of the same number of sides) and adds a modifier to the result.", () => {
+        it("Creates several dice and adds a fixed number to the output.", () => {
+          const _2d6plus4 = createDice(6, 2, 4);
+
+          const result = testRollLrg(_2d6plus4);
+          expect(min(result)).toBe(2 * 1 + 4);
+          expect(max(result)).toBe(2 * 6 + 4);
+        });
+        it("Uses 0 for the default modifier.", () => {
+          const _2d6 = createDice(6, 2);
+
+          const result = testRollLrg(_2d6);
+          expect(min(result)).toBe(2 * 1 + 0);
+          expect(max(result)).toBe(2 * 6 + 0);
+        });
+        it("Uses 1 for the default multiplier.", () => {
+          const _d6 = createDice(6);
+          const result = testRollLrg(_d6);
+          expect(min(result)).toBe(1 * 1 + 0);
+          expect(max(result)).toBe(1 * 6 + 0);
+        });
       });
     });
 

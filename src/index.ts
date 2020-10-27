@@ -1,6 +1,6 @@
 type Unary<Param, Return> = (_: Param) => Return;
-type NumberFunction = () => number;
-type RollFunction = NumberFunction;
+type NumberGenerator = () => number;
+type RollFunction = NumberGenerator;
 
 const r = Math.random;
 
@@ -21,8 +21,8 @@ export const callMultipleTimes = (times: number) => (
 };
 
 const callAndAdd = (modifier: number) => (
-  func: NumberFunction,
-): NumberFunction => () => func() + modifier;
+  func: NumberGenerator,
+): NumberGenerator => () => func() + modifier;
 
 export const random = r;
 
@@ -50,6 +50,16 @@ export const multipleDice = (die: RollFunction) => (
 export const constant = (a: number): RollFunction => () => a;
 
 export const addToRoll = callAndAdd;
+
+export const createDice = (
+  sides: number,
+  multiplier = 1,
+  modifier = 0,
+): RollFunction => {
+  const die = createDie(sides);
+  const dice = multipleDice(die)(multiplier);
+  return addToRoll(modifier)(dice);
+};
 
 export const combineDice = (dice: RollFunction[]): RollFunction => {
   if (dice.length === 0) {

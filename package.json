@@ -24,9 +24,6 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/plugin-proposal-partial-application": "^7.12.1",
-    "@babel/plugin-proposal-pipeline-operator": "^7.12.1",
     "@size-limit/preset-small-lib": "^4.6.0",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",

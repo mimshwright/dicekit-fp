@@ -84,20 +84,30 @@ describe("dicekit", () => {
       it("Negative numbers work.", () => {
         const results = testRollMed(() => randomIntegerBetween(-10, -50));
 
-        expect(min(results)).toBe(-50);
         expect(max(results)).toBe(-10);
+        expect(min(results)).toBe(-50);
       });
 
       it("Range is inclusive.", () => {
-        const results = testRollSm(() => randomIntegerBetween(1, 2));
+        const results = testRollSm(() => randomIntegerBetween(2, 1));
 
         expect(min(results)).toBe(1);
         expect(max(results)).toBe(2);
       });
+
+      it("Expects max to be the first parameter and min to be the second, but if min > max, it switches them automatically.", () => {
+        const resultsIncorrect = testRollSm(() => randomIntegerBetween(1, 3));
+        const resultsCorrect = testRollSm(() => randomIntegerBetween(3, 1));
+
+        expect(min(resultsCorrect)).toBe(1);
+        expect(min(resultsIncorrect)).toBe(1);
+        expect(max(resultsCorrect)).toBe(3);
+        expect(max(resultsIncorrect)).toBe(3);
+      });
     });
 
     describe("randomInteger()", () => {
-      it("Is a unary form of randomIntegerBetween()", () => {
+      it("Is a unary form of randomIntegerBetween(). Only takes a maximum and assumes minimum is 0.", () => {
         const results = testRollMed(() => randomInteger(10));
         const resultsBetween = testRollMed(() => randomIntegerBetween(10, 0));
 
@@ -330,7 +340,7 @@ describe("dicekit", () => {
           expect(max(result)).toBe(2 * 6);
 
           const _2d6plus2d12 = p("2d6+2d12");
-          const result2 = testRollLrg(_2d6plus2d12);
+          const result2 = testRollXLrg(_2d6plus2d12);
           expect(min(result2)).toBe(2 * 1 + 2 * 1);
           expect(max(result2)).toBe(2 * 6 + 2 * 12);
         });

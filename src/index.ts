@@ -14,8 +14,8 @@ export const callMultipleTimes = (times: number) => (
   let i = 0;
   const results = [];
   while (i < times) {
-    i += 1;
     results[i] = func(i);
+    i += 1;
   }
   return results;
 };
@@ -28,13 +28,22 @@ const r = Math.random;
 
 export const random = r;
 
-export const randomNumberBetween = (high: number, low = 0): number =>
-  r() * (high - low) + low;
+export const randomNumberBetween = (max = 1, min = 0): number =>
+  r() * (max - min) + min;
 
-export const randomIntegerBetween = (high: number, low = 0): number =>
-  Math.round(randomNumberBetween(high, low));
+// inclusive for min and max
+export const randomIntegerBetween = (max: number, min = 0): number => {
+  // make sure max >= min
+  [max, min] = [Math.max(max, min), Math.min(max, min)];
+  min = Math.ceil(min);
+  max = Math.floor(max);
+
+  const result = Math.floor(r() * (max - min + 1) + min);
+  return result;
+};
 
 // Unary version of randomIntegerBetween
+// Returns a number between 0 and n
 export const randomInteger: Unary<number, number> = randomIntegerBetween;
 
 export const randomBoolean = (): boolean => r() > 0.5;
@@ -68,45 +77,73 @@ export const combineDice = (dice: RollFunction[]): RollFunction => {
   return () => dice.reduce((acc: number, roll) => acc + roll(), 0);
 };
 
-export const parseDiceString: Unary<string, RollFunction> = (diceString) => {
+type Modifier = number;
+type Multiplier = number;
+type Sides = number;
+type DiceToken = [Multiplier, Sides];
+type DiceTokensWithModifier = [DiceToken[], Modifier];
+
+const tokenizeDiceString: Unary<string, DiceTokensWithModifier> = (
+  diceString,
+) => {
+  // fix formatting
   const sanitized = diceString
+    // make case uniform
     .toLowerCase()
+    // remove whitespace
     .replace(/\s/g, "")
+    // add plus signs before negative numbers
     .replace("-", "+-");
 
+  // Split on plus signs
   const tokens = sanitized.split("+");
 
-  const modifierTokens = tokens
-    .filter((s) => s.includes("d") === false)
-    .map((s) => parseInt(s, 10));
-  const modifier = sumArray(modifierTokens);
-
-  const diceTokens = tokens
+  // filter out dice tokens
+  const diceTokenStrings = tokens
+    // dice tokens contain a "d"
     .filter((s) => s.includes("d"))
+    // add an implicit 1 to any dice without multipliers
     .map((s) => s.replace(/^d/g, "1d"));
 
-  const dicePairs = diceTokens.map((dieToken) =>
-    dieToken.split("d").map((s) => parseInt(s, 10)),
+  // filter out modifier tokens
+  const modifierTokens = tokens
+    // these tokens contain no "d"
+    .filter((s) => s.includes("d") === false)
+    // Convert to integers
+    .map((s) => parseInt(s, 10));
+
+  // create tuples ([Multiplier, Sides]) from the dice tokens.
+  const diceTokens: DiceToken[] = diceTokenStrings.map(
+    // Split on "d"
+    (dieToken) =>
+      dieToken
+        .split("d")
+        // convert to ints.
+        .map((s) => parseInt(s, 10)) as DiceToken,
   );
 
-  const [low, high] = dicePairs.reduce(
-    (limits, [multiplier, sides]) => {
-      limits[0] += multiplier * 1;
-      limits[1] += multiplier * sides;
-      return limits;
-    },
-    [0, 0],
-  );
-
-  const megaDie = addToRoll(modifier)(() => randomIntegerBetween(high, low));
+  // combine the modifier into one number
+  const modifier: Modifier = sumArray(modifierTokens);
 
   // console.log(`parseDiceString("${diceString}");`);
   // console.log(`  Sanitized string: "${sanitized}"`);
   // console.log(`  Extracted tokens: ${tokens}`);
+  // console.log(`  Dice Tokens: ${diceTokens.map((d) => d.join("x")).join(",")}`);
   // console.log(`  Total modifier: ${modifier}`);
-  // console.log(`  Dice Tokens: ${diceTokens}`);
-  // console.log(`  Dice pairs: ${dicePairs}`);
-  // console.log(`  Low / High dice range: ${low} / ${high} + ${modifier}`);
 
-  return megaDie;
+  // return a tuple containing the dice token array and the modifier.
+  return [diceTokens, modifier];
+};
+
+export const parseDiceString: Unary<string, RollFunction> = (diceString) => {
+  const [diceTokens, modifier]: DiceTokensWithModifier = tokenizeDiceString(
+    diceString,
+  );
+
+  const addModifier = addToRoll(modifier);
+  const dice = diceTokens.map(([multiplier, sides]) =>
+    createDice(sides, multiplier),
+  );
+
+  return addModifier(combineDice(dice));
 };

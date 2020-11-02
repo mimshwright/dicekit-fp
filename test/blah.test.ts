@@ -1,7 +1,5 @@
+import { identity, callMultipleTimes, min, max } from "../src/utils";
 import {
-  identity,
-  addToRoll,
-  callMultipleTimes,
   random,
   randomBoolean,
   randomIntegerBetween,
@@ -11,13 +9,8 @@ import {
   multipleDice,
   combineDice,
   parseDiceString,
+  addToRoll,
 } from "../src/index";
-
-const max = (nums: number[]) =>
-  nums.reduce((a, b) => Math.max(a, b), Number.NEGATIVE_INFINITY);
-
-const min = (nums: number[]) =>
-  nums.reduce((a, b) => Math.min(a, b), Number.POSITIVE_INFINITY);
 
 const testRoll = callMultipleTimes;
 
@@ -25,42 +18,6 @@ const testRollSm = testRoll(200);
 const testRollMed = testRoll(1000);
 const testRollLrg = testRoll(5000);
 const testRollXLrg = testRoll(100000);
-
-// Test the test utils.
-
-describe("test utils", () => {
-  describe("identity()", () => {
-    it("Takes an argument, a, returns a function that returns a (ignoring any arguments provided to it). ", () => {
-      expect(identity(1)()).toBe(1);
-      expect(identity("foo")("bar")).toBe("foo");
-    });
-  });
-
-  describe("callMultipleTimes()", () => {
-    let x = 0;
-    const testFunc = () => {
-      x += 1;
-    };
-
-    callMultipleTimes(10)(testFunc);
-
-    expect(x).toBe(10);
-  });
-
-  describe("min()", () => {
-    it("Returns the minimum value in a number[].", () => {
-      expect(min([9, 50, 7, 1, -13, 102])).toBe(-13);
-    });
-  });
-
-  describe("max()", () => {
-    it("Returns the maximum value in a number[].", () => {
-      expect(max([9, 50, 7, 1, -13, 102])).toBe(102);
-    });
-  });
-});
-
-// Test the main library.
 
 describe("dicekit", () => {
   describe("[WARNING: In rare cases, these tests can fail due to random values. Please test again if this happens or raise the number of testRolls!]", () => {

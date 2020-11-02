@@ -1,37 +1,13 @@
-type Unary<Param, Return> = (_: Param) => Return;
-type NumberGenerator = () => number;
-type Modifier = number;
-type Multiplier = number;
-type Sides = number;
-type DiceToken = [Multiplier, Sides];
-type DiceTokensWithModifier = [DiceToken[], Modifier];
-
-/// // Utilities
-
-// identity :: a -> () -> a
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/explicit-module-boundary-types
-export const identity = <T>(a: T) => (_ignored?: any) => a;
-
-const add = (a: number, b: number) => a + b;
-const sum = (...numbers: number[]) => numbers.reduce(add, 0);
-const sumArray = (numbers: number[]) => sum(...numbers);
-
-// callMultipleTimes :: Number t -> (t -> a) -> a[]
-export const callMultipleTimes = (times: number) => (
-  func: (index: number) => any,
-): any[] => {
-  let i = 0;
-  const results = [];
-  while (i < times) {
-    results[i] = func(i);
-    i += 1;
-  }
-  return results;
-};
-
-const callAndAdd = (modifier: Modifier) => (
-  func: NumberGenerator,
-): NumberGenerator => () => func() + modifier;
+import {
+  NumberGenerator,
+  Unary,
+  Sides,
+  Modifier,
+  Multiplier,
+  DiceTokensWithModifier,
+  DiceToken,
+} from "./types";
+import { sumArray, callAndAdd, callMultipleTimes } from "./utils";
 
 /// // RNGs
 

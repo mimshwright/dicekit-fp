@@ -13,16 +13,6 @@ module.exports = {
     browser: true,
     jest: true,
   },
-  rules: {
-    "import/extensions": "off",
-    "import/prefer-default-export": "off",
-    "prettier/prettier": ["error", { trailingComma: "all" }],
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "jsx-a11y/label-has-associated-control": "off",
-    "no-param-reassign": "off",
-    "no-underscore-dangle": "off",
-  },
   settings: {
     "import/parsers": {
       "@typescript-eslint/parser": [".ts", ".tsx"],
@@ -43,4 +33,22 @@ module.exports = {
       },
     },
   ],
+
+  rules: {
+    "import/extensions": "off",
+    "import/prefer-default-export": "off",
+    "prettier/prettier": ["error", { trailingComma: "all" }],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": [
+      "error",
+      {
+        allowedNames: ["_"],
+      },
+    ],
+    "jsx-a11y/label-has-associated-control": "off",
+    "no-param-reassign": "off",
+    "no-underscore-dangle": "off",
+    "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+  },
 };

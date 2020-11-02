@@ -1,5 +1,4 @@
 import {
-  thunkify,
   identity,
   addToRoll,
   callMultipleTimes,
@@ -31,30 +30,9 @@ const testRollXLrg = testRoll(100000);
 
 describe("test utils", () => {
   describe("identity()", () => {
-    it("Takes an argument, a, returns a function that returns a. ", () => {
+    it("Takes an argument, a, returns a function that returns a (ignoring any arguments provided to it). ", () => {
       expect(identity(1)()).toBe(1);
       expect(identity("foo")("bar")).toBe("foo");
-    });
-  });
-
-  describe("thunkify()", () => {
-    it("Takes a function, then arguments, then returns a function that when called, returns the result of the function called with the arguments. ", () => {
-      const add = (a: number) => (b: number) => a + b;
-      const sum = (a: number, ...rest: number[]) =>
-        rest.reduce((x: number, b) => x + b, a);
-
-      expect(thunkify).toBeInstanceOf(Function);
-
-      const thunkAdd10 = thunkify(add(10));
-      const thunk30 = thunkAdd10(20);
-      expect(thunkAdd10).toBeInstanceOf(Function);
-      expect(thunk30).toBeInstanceOf(Function);
-      expect(thunk30()).toBe(30);
-
-      // multiple args
-      const thunkSum = thunkify(sum);
-      expect(thunkSum(1, 2, 3)).toBeInstanceOf(Function);
-      expect(thunkSum(1, 2, 3)()).toBe(6);
     });
   });
 

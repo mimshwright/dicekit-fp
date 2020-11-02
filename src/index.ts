@@ -8,15 +8,9 @@ type DiceTokensWithModifier = [DiceToken[], Modifier];
 
 /// // Utilities
 
-// thunkify :: (a -> b) -> a -> () -> b
-export const thunkify = <T>(f: (...args: any[]) => T) => (...args: any[]) => (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,
-  ..._ignoredArgs: any[]
-): T => f(...args);
-
 // identity :: a -> () -> a
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/explicit-module-boundary-types
-export const identity = thunkify((a) => a);
+export const identity = <T>(a: T) => (_ignored?: any) => a;
 
 const add = (a: number, b: number) => a + b;
 const sum = (...numbers: number[]) => numbers.reduce(add, 0);
@@ -70,8 +64,8 @@ export const randomElement: <T>(arr: T[]) => T = (arr) =>
 
 /// // Dice
 
-export const createDie: Unary<Sides, NumberGenerator> = (sides: Sides) =>
-  thunkify(randomIntegerBetween)(sides, 1);
+export const createDie: Unary<Sides, NumberGenerator> = (sides: Sides) => () =>
+  randomIntegerBetween(sides, 1);
 
 export const multipleDice = (die: NumberGenerator) => (
   multiplier: Multiplier,

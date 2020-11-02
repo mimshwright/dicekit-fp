@@ -1,5 +1,6 @@
 import {
-  constant,
+  thunkify,
+  identity,
   addToRoll,
   callMultipleTimes,
   random,
@@ -29,6 +30,34 @@ const testRollXLrg = testRoll(100000);
 // Test the test utils.
 
 describe("test utils", () => {
+  describe("identity()", () => {
+    it("Takes an argument, a, returns a function that returns a. ", () => {
+      expect(identity(1)()).toBe(1);
+      expect(identity("foo")("bar")).toBe("foo");
+    });
+  });
+
+  describe("thunkify()", () => {
+    it("Takes a function, then arguments, then returns a function that when called, returns the result of the function called with the arguments. ", () => {
+      const add = (a: number) => (b: number) => a + b;
+      const sum = (a: number, ...rest: number[]) =>
+        rest.reduce((x: number, b) => x + b, a);
+
+      expect(thunkify).toBeInstanceOf(Function);
+
+      const thunkAdd10 = thunkify(add(10));
+      const thunk30 = thunkAdd10(20);
+      expect(thunkAdd10).toBeInstanceOf(Function);
+      expect(thunk30).toBeInstanceOf(Function);
+      expect(thunk30()).toBe(30);
+
+      // multiple args
+      const thunkSum = thunkify(sum);
+      expect(thunkSum(1, 2, 3)).toBeInstanceOf(Function);
+      expect(thunkSum(1, 2, 3)()).toBe(6);
+    });
+  });
+
   describe("callMultipleTimes()", () => {
     let x = 0;
     const testFunc = () => {
@@ -170,12 +199,12 @@ describe("dicekit", () => {
 
     describe("constant()", () => {
       it("Takes a number value and returns a function that always returns that number. K-combinator", () => {
-        const one = constant(1);
+        const one = identity(1);
 
         expect(one).toBeInstanceOf(Function);
         expect(one()).toBe(1);
-        expect(constant(0)()).toBe(0);
-        expect(constant(999)()).toBe(999);
+        expect(identity(0)()).toBe(0);
+        expect(identity(999)()).toBe(999);
       });
     });
 
@@ -224,7 +253,7 @@ describe("dicekit", () => {
     describe("combineDice()", () => {
       describe("Takes an array of dice roll functions and returns one that combines the results of all.", () => {
         it("Is a function that returns a function.", () => {
-          const one = constant(1);
+          const one = identity(1);
           const combined = combineDice([one]);
 
           expect(combineDice).toBeInstanceOf(Function);
@@ -240,7 +269,7 @@ describe("dicekit", () => {
 
         it("Combines dice functions. Functions must be in the form `() => number`", () => {
           const d6 = createDie(6);
-          const plus2 = constant(2);
+          const plus2 = identity(2);
 
           const _2d6plus2 = combineDice([d6, d6, plus2]);
           expect(_2d6plus2).toBeInstanceOf(Function);
@@ -257,7 +286,7 @@ describe("dicekit", () => {
           const _2d12plus3plus1d8minus5 = combineDice([
             _2d12plus3,
             d8,
-            constant(-5),
+            identity(-5),
           ]);
 
           const results2 = testRollXLrg(_2d12plus3plus1d8minus5);

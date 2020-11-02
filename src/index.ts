@@ -1,13 +1,28 @@
 type Unary<Param, Return> = (_: Param) => Return;
 type NumberGenerator = () => number;
-type RollFunction = NumberGenerator;
+type Modifier = number;
+type Multiplier = number;
+type Sides = number;
+type DiceToken = [Multiplier, Sides];
+type DiceTokensWithModifier = [DiceToken[], Modifier];
 
-export const constant = (a: number): RollFunction => () => a;
+/// // Utilities
 
-const sum = (a: number, b: number) => a + b;
+// thunkify :: (a -> b) -> a -> () -> b
+export const thunkify = <T>(f: (...args: any[]) => T) => (...args: any[]) => (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,
+  ..._ignoredArgs: any[]
+): T => f(...args);
 
-const sumArray = (arr: number[]) => arr.reduce(sum, 0);
+// identity :: a -> () -> a
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/explicit-module-boundary-types
+export const identity = thunkify((a) => a);
 
+const add = (a: number, b: number) => a + b;
+const sum = (...numbers: number[]) => numbers.reduce(add, 0);
+const sumArray = (numbers: number[]) => sum(...numbers);
+
+// callMultipleTimes :: Number t -> (t -> a) -> a[]
 export const callMultipleTimes = (times: number) => (
   func: (index: number) => any,
 ): any[] => {
@@ -20,11 +35,13 @@ export const callMultipleTimes = (times: number) => (
   return results;
 };
 
-const callAndAdd = (modifier: number) => (
+const callAndAdd = (modifier: Modifier) => (
   func: NumberGenerator,
 ): NumberGenerator => () => func() + modifier;
 
-const r = Math.random;
+/// // RNGs
+
+const r: NumberGenerator = Math.random;
 
 export const random = r;
 
@@ -51,37 +68,35 @@ export const randomBoolean = (): boolean => r() > 0.5;
 export const randomElement: <T>(arr: T[]) => T = (arr) =>
   arr[randomInteger(arr.length - 1)];
 
-export const multipleDice = (die: RollFunction) => (
-  multiplier: number,
-): RollFunction => () => sumArray(callMultipleTimes(multiplier)(die));
+/// // Dice
+
+export const createDie: Unary<Sides, NumberGenerator> = (sides: Sides) =>
+  thunkify(randomIntegerBetween)(sides, 1);
+
+export const multipleDice = (die: NumberGenerator) => (
+  multiplier: Multiplier,
+): NumberGenerator => () => sumArray(callMultipleTimes(multiplier)(die));
 
 export const addToRoll = callAndAdd;
 
-export const createDie: Unary<number, RollFunction> = (sides: number) => () =>
-  randomIntegerBetween(sides, 1);
-
 export const createDice = (
-  sides: number,
-  multiplier = 1,
-  modifier = 0,
-): RollFunction => {
+  sides: Sides,
+  multiplier: Multiplier = 1,
+  modifier: Modifier = 0,
+): NumberGenerator => {
   const die = createDie(sides);
   const dice = multipleDice(die)(multiplier);
   return addToRoll(modifier)(dice);
 };
 
-export const combineDice = (dice: RollFunction[]): RollFunction => {
+export const combineDice = (dice: NumberGenerator[]): NumberGenerator => {
   if (dice.length === 0) {
     throw new Error("The dice array must contain at least one roll function.");
   }
   return () => dice.reduce((acc: number, roll) => acc + roll(), 0);
 };
 
-type Modifier = number;
-type Multiplier = number;
-type Sides = number;
-type DiceToken = [Multiplier, Sides];
-type DiceTokensWithModifier = [DiceToken[], Modifier];
+/// // string parsing
 
 const tokenizeDiceString: Unary<string, DiceTokensWithModifier> = (
   diceString,
@@ -135,7 +150,7 @@ const tokenizeDiceString: Unary<string, DiceTokensWithModifier> = (
   return [diceTokens, modifier];
 };
 
-export const parseDiceString: Unary<string, RollFunction> = (diceString) => {
+export const parseDiceString: Unary<string, NumberGenerator> = (diceString) => {
   const [diceTokens, modifier]: DiceTokensWithModifier = tokenizeDiceString(
     diceString,
   );

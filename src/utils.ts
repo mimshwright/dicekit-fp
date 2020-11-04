@@ -37,3 +37,7 @@ export const callMultipleTimes = (times: number) => (
 export const callAndAdd = (modifier: Modifier) => (
   func: NumberGenerator,
 ): NumberGenerator => () => func() + modifier;
+
+// count :: Number n => a -> a[] -> n
+export const count = <T>(match: T) => (list: T[]): number =>
+  list.filter((element) => element === match).length;

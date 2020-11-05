@@ -1,4 +1,5 @@
-import { identity, callMultipleTimes, min, max } from "../src/utils";
+import { count, identity, callMultipleTimes, min, max } from "../src/utils";
+
 // Test the test utils.
 
 describe("test utils", () => {
@@ -29,6 +30,16 @@ describe("test utils", () => {
   describe("max()", () => {
     it("Returns the maximum value in a number[].", () => {
       expect(max([9, 50, 7, 1, -13, 102])).toBe(102);
+    });
+  });
+
+  describe("count()", () => {
+    it("Counts instances of an element within an array.", () => {
+      const nums = [1, 1, 1, 1, 1, 2, 3, 4, 5];
+      expect(count("hello")([])).toBe(0);
+      expect(count(1)(nums)).toBe(5);
+      expect(count(5)(nums)).toBe(1);
+      expect(count(6)(nums)).toBe(0);
     });
   });
 });

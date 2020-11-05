@@ -35,9 +35,13 @@ module.exports = {
   ],
 
   rules: {
+    "no-unused-vars": "off",
+    "no-param-reassign": "off",
+    "no-underscore-dangle": "off",
     "import/extensions": "off",
     "import/prefer-default-export": "off",
     "prettier/prettier": ["error", { trailingComma: "all" }],
+    "jsx-a11y/label-has-associated-control": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": [
@@ -46,9 +50,6 @@ module.exports = {
         allowedNames: ["_"],
       },
     ],
-    "jsx-a11y/label-has-associated-control": "off",
-    "no-param-reassign": "off",
-    "no-underscore-dangle": "off",
-    "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
   },
 };

@@ -1,16 +1,22 @@
-import { identity, callMultipleTimes, min, max } from "../src/utils";
+import { NumberGenerator } from "../src/types";
 import {
   random,
-  randomBoolean,
+  randomNumberBetween,
   randomIntegerBetween,
   randomInteger,
+  randomElement,
+  randomBoolean,
   createDie,
+  createCustomDie,
   createDice,
   multipleDice,
   combineDice,
   parseDiceString,
   addToRoll,
+  init,
 } from "../src/index";
+
+import { identity, callMultipleTimes, min, max, count } from "../src/utils";
 
 const testRoll = callMultipleTimes;
 
@@ -20,6 +26,62 @@ const testRollLrg = testRoll(5000);
 const testRollXLrg = testRoll(100000);
 
 describe("dicekit", () => {
+  describe("init()", () => {
+    describe("Creates a suite of dice functions mapped to your choice of RNG.", () => {
+      it("Should use Math.random by default", () => {
+        const diceKit = init();
+        expect(diceKit.random).toBe(Math.random);
+      });
+
+      it("Can take any function that returns numbers, n, where 0.0>=n<1.0 ", () => {
+        const sequence = [0.0, 0.2, 0.4, 0.6, 0.8, 0.99999999];
+        let i = 0;
+        const sequencedNumberGenerator = () => {
+          const result = sequence[i];
+          i = (i + 1) % sequence.length;
+          return result;
+        };
+
+        const diceKit = init(sequencedNumberGenerator);
+        const r = () => diceKit.randomIntegerBetween(10, 0);
+
+        expect(r()).toBe(0);
+        expect(r()).toBe(2);
+        expect(r()).toBe(4);
+        expect(r()).toBe(6);
+        expect(r()).toBe(8);
+        expect(r()).toBe(10);
+
+        const die = diceKit.createDie(6);
+        expect(die()).toBe(1);
+        expect(die()).toBe(2);
+        expect(die()).toBe(3);
+        expect(die()).toBe(4);
+        expect(die()).toBe(5);
+        expect(die()).toBe(6);
+      });
+
+      it("All public functions are part of the object returned by init().", () => {
+        const diceKit = init();
+        const tbf = (f: any) => expect(f).toBeInstanceOf(Function);
+
+        tbf(diceKit.random);
+        tbf(diceKit.randomNumberBetween);
+        tbf(diceKit.randomElement);
+        tbf(diceKit.randomBoolean);
+        tbf(diceKit.randomInteger);
+        tbf(diceKit.randomIntegerBetween);
+        tbf(diceKit.createDie);
+        tbf(diceKit.createCustomDie);
+        tbf(diceKit.createDice);
+        tbf(diceKit.combineDice);
+        tbf(diceKit.multipleDice);
+        tbf(diceKit.addToRoll);
+        tbf(diceKit.parseDiceString);
+      });
+    });
+  });
+
   describe("[WARNING: In rare cases, these tests can fail due to random values. Please test again if this happens or raise the number of testRolls!]", () => {
     describe("random()", () => {
       it("Returns a value between 0 and 1", () => {
@@ -27,6 +89,18 @@ describe("dicekit", () => {
 
         expect(min(results)).toBeGreaterThan(0);
         expect(max(results)).toBeLessThan(1);
+      });
+    });
+
+    describe("randomNumberBetween()", () => {
+      it("Returns a number (not an integer) between low and hi", () => {
+        const results = testRollSm(() => randomNumberBetween(4, 2));
+
+        expect(min(results)).toBeGreaterThan(2);
+        expect(min(results)).toBeLessThan(2.5);
+
+        expect(max(results)).toBeGreaterThan(3.5);
+        expect(max(results)).toBeLessThan(4);
       });
     });
 
@@ -90,6 +164,15 @@ describe("dicekit", () => {
       });
     });
 
+    describe("randomElement()", () => {
+      it("Returns a random element from the array.", () => {
+        const results = testRollMed(() => randomElement([0, 1, 2, 3, 4, 5]));
+
+        expect(min(results)).toBe(0);
+        expect(max(results)).toBe(5);
+      });
+    });
+
     describe("createDie()", () => {
       it("Returns a function that generates random numbers between 1 and 'sides'", () => {
         const d6 = createDie(6);
@@ -105,6 +188,59 @@ describe("dicekit", () => {
 
         expect(min(results)).toBe(1);
         expect(max(results)).toBe(2);
+      });
+    });
+
+    describe("createCustomDie()", () => {
+      it("Returns a generator that maps each side to a different value.", () => {
+        const weightedDie: NumberGenerator = createCustomDie([
+          1,
+          2,
+          2,
+          3,
+          3,
+          3,
+          3,
+          4,
+          4,
+          5,
+        ]);
+        const results = testRollMed(weightedDie);
+        const count1 = count(1)(results);
+        const count3 = count(3)(results);
+
+        expect(min(results)).toBe(1);
+        expect(max(results)).toBe(5);
+        expect(count3 / count1).toBeGreaterThan(3);
+      });
+      it("Can return a NumberGenerator or another type of generator.", () => {
+        const colors = [
+          "red",
+          "orange",
+          "yellow",
+          "green",
+          "blue",
+          "indigo",
+          "violet",
+        ];
+        const colorDie = createCustomDie(colors);
+        const results = testRollSm(colorDie);
+
+        expect(results[0]).toHaveProperty("length");
+        colors.forEach((c) => expect(count(c)(results)).toBeGreaterThan(10));
+
+        expect(createCustomDie([new Date()])()).toBeInstanceOf(Date);
+      });
+
+      it("Can still be combined with other functions if it's a number generator", () => {
+        const ones = createDie(10);
+        const tens = createCustomDie([10, 20, 30, 40, 50, 60, 70, 80, 90, 0]);
+
+        const hundredSided = combineDice([ones, tens]);
+
+        const results = testRollLrg(hundredSided);
+        expect(min(results)).toBe(1);
+        expect(max(results)).toBe(100);
       });
     });
 

@@ -1,6 +1,5 @@
 import {
   NumberGenerator,
-  Unary,
   Sides,
   Modifier,
   Multiplier,
@@ -11,15 +10,18 @@ import { sumArray, callAndAdd, callMultipleTimes } from "./utils";
 
 /// // RNGs
 
-const r: NumberGenerator = Math.random;
+const _addToRoll = callAndAdd;
 
-export const random = r;
-
-export const randomNumberBetween = (max = 1, min = 0): number =>
-  r() * (max - min) + min;
+const _randomNumberBetween = (r: NumberGenerator) => (
+  max = 1,
+  min = 0,
+): number => r() * (max - min) + min;
 
 // inclusive for min and max
-export const randomIntegerBetween = (max: number, min = 0): number => {
+const _randomIntegerBetween = (r: NumberGenerator) => (
+  max: number,
+  min = 0,
+): number => {
   // make sure max >= min
   [max, min] = [Math.max(max, min), Math.min(max, min)];
   min = Math.ceil(min);
@@ -29,48 +31,39 @@ export const randomIntegerBetween = (max: number, min = 0): number => {
   return result;
 };
 
-// Unary version of randomIntegerBetween
-// Returns a number between 0 and n
-export const randomInteger: Unary<number, number> = randomIntegerBetween;
+const _randomBoolean = (r: NumberGenerator) => (): boolean => r() > 0.5;
 
-export const randomBoolean = (): boolean => r() > 0.5;
+const _randomElement = (r: NumberGenerator) => <T>(arr: T[]): T =>
+  arr[_randomIntegerBetween(r)(arr.length - 1)];
 
-export const randomElement: <T>(arr: T[]) => T = (arr) =>
-  arr[randomInteger(arr.length - 1)];
+const _createDie = (r: NumberGenerator) => (sides: Sides) => () =>
+  _randomIntegerBetween(r)(sides, 1);
 
-/// // Dice
+const _createCustomDie = (r: NumberGenerator) => <T>(sides: T[]) => () =>
+  _randomElement(r)(sides);
 
-export const createDie: Unary<Sides, NumberGenerator> = (sides: Sides) => () =>
-  randomIntegerBetween(sides, 1);
-
-export const multipleDice = (die: NumberGenerator) => (
+const _multipleDice = (die: NumberGenerator) => (
   multiplier: Multiplier,
 ): NumberGenerator => () => sumArray(callMultipleTimes(multiplier)(die));
 
-export const addToRoll = callAndAdd;
-
-export const createDice = (
+const _createDice = (r: NumberGenerator) => (
   sides: Sides,
   multiplier: Multiplier = 1,
   modifier: Modifier = 0,
 ): NumberGenerator => {
-  const die = createDie(sides);
-  const dice = multipleDice(die)(multiplier);
-  return addToRoll(modifier)(dice);
+  const die = _createDie(r)(sides);
+  const dice = _multipleDice(die)(multiplier);
+  return _addToRoll(modifier)(dice);
 };
 
-export const combineDice = (dice: NumberGenerator[]): NumberGenerator => {
+const _combineDice = (dice: NumberGenerator[]): NumberGenerator => {
   if (dice.length === 0) {
     throw new Error("The dice array must contain at least one roll function.");
   }
   return () => dice.reduce((acc: number, roll) => acc + roll(), 0);
 };
 
-/// // string parsing
-
-const tokenizeDiceString: Unary<string, DiceTokensWithModifier> = (
-  diceString,
-) => {
+const _tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
   // fix formatting
   const sanitized = diceString
     // make case uniform
@@ -120,15 +113,50 @@ const tokenizeDiceString: Unary<string, DiceTokensWithModifier> = (
   return [diceTokens, modifier];
 };
 
-export const parseDiceString: Unary<string, NumberGenerator> = (diceString) => {
-  const [diceTokens, modifier]: DiceTokensWithModifier = tokenizeDiceString(
+const _parseDiceString = (r: NumberGenerator) => (diceString: string) => {
+  const [diceTokens, modifier]: DiceTokensWithModifier = _tokenizeDiceString(
     diceString,
   );
 
-  const addModifier = addToRoll(modifier);
+  const addModifier = _addToRoll(modifier);
   const dice = diceTokens.map(([multiplier, sides]) =>
-    createDice(sides, multiplier),
+    _createDice(r)(sides, multiplier),
   );
 
-  return addModifier(combineDice(dice));
+  return addModifier(_combineDice(dice));
 };
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const init = (r: NumberGenerator = Math.random) => ({
+  random: r,
+  randomNumberBetween: _randomNumberBetween(r),
+  randomIntegerBetween: _randomIntegerBetween(r),
+  randomInteger: _randomIntegerBetween(r),
+  randomBoolean: _randomBoolean(r),
+  randomElement: _randomElement(r),
+
+  addToRoll: _addToRoll,
+  createDie: _createDie(r),
+  createCustomDie: _createCustomDie(r),
+  multipleDice: _multipleDice,
+  createDice: _createDice(r),
+  combineDice: _combineDice,
+  parseDiceString: _parseDiceString(r),
+});
+
+export const {
+  random,
+  randomNumberBetween,
+  randomIntegerBetween,
+  randomInteger,
+  randomBoolean,
+  randomElement,
+
+  createDie,
+  createCustomDie,
+  multipleDice,
+  addToRoll,
+  createDice,
+  combineDice,
+  parseDiceString,
+} = init(Math.random);

@@ -8,7 +8,7 @@ Instead of using objects, the library creates random number generators based on 
 
 ### Create a basic die with `createDie()`
 
-```
+```typescript
 // takes a number of faces for the die as an argument and returns a function that generates ints.
 const d6 = createDie(6);
 
@@ -18,14 +18,14 @@ d6();
 
 You can use any number (>=2) of faces
 
-```
+```typescript
 const coinFlip = createDie(2);
 const devilDie = createDie(666);
 ```
 
 ### Create multiple dice with a modifier in one step using `createDice()`
 
-```
+```typescript
 // takes a number of faces, number of dice (default 1), and modifier (default +0)
 const _2d6plus3 = createDice(6, 2, 3);
 
@@ -41,7 +41,7 @@ const _1d6 = createDice(6);
 
 ### Combine multiple dice functions with `combineDice()`
 
-```
+```typescript
 const d6 = createDie(6);
 const d8 = createDie(8);
 const two = () => 2;
@@ -77,15 +77,15 @@ Whitespace and letter case are ignored.
 
 To create a die that isn't typical, you can use `createCustomDie()` and provide an array of dice face values.
 
-```
-const colors = [ "red", "orange","yellow","green","blue","indigo","violet" ];
+```typescript
+const colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
 const colorDie = createCustomDie(colors);
 
 // Generate a random color string
 colorDie();
 
 // If the values are numerical, they can be combined with other dice functions...
-const weightedD6 = createCustomDie([1,2,3,4,5,6,6,6]);
+const weightedD6 = createCustomDie([1, 2, 3, 4, 5, 6, 6, 6]);
 const d6 = createDie(6);
 const funnyDice = combineDice([d6, weightedDie]);
 ```

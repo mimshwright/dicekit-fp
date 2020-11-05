@@ -102,6 +102,13 @@ describe("dicekit", () => {
         expect(max(results)).toBeGreaterThan(3.5);
         expect(max(results)).toBeLessThan(4);
       });
+
+      it("Defaults to 0.0 ~ 0.99999...", () => {
+        const results = testRollSm(() => randomNumberBetween());
+
+        expect(min(results)).toBeGreaterThanOrEqual(0);
+        expect(min(results)).toBeLessThan(1.0);
+      });
     });
 
     describe("randomIntegerBetween()", () => {

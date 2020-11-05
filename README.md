@@ -1,10 +1,112 @@
-# TSDX User Guide
+# dicekit-fp
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+A functional-programming-friendly library for rolling virtual dice. Provides pure-functional way to create random numbers and dice (functions that create random integers), combine and modiify the dice results, and convert strings like "2d6+2" to functions.
 
-> This TSDX setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
+Instead of using objects, the library creates random number generators based on the parameters you provide. The library uses higher-order functions to modify the results in order to modify or multiply the results of the dice rolls. Most of the functions return a `() => number` (aliased in the Typescript code as `NumberGenerator`)
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
+## Use
+
+### Create a basic die with `createDie()`
+
+```
+// takes a number of faces for the die as an argument and returns a function that generates ints.
+const d6 = createDie(6);
+
+// random int between 1 and 6
+d6();
+```
+
+You can use any number (>=2) of faces
+
+```
+const coinFlip = createDie(2);
+const devilDie = createDie(666);
+```
+
+### Create multiple dice with a modifier in one step using `createDice()`
+
+```
+// takes a number of faces, number of dice (default 1), and modifier (default +0)
+const _2d6plus3 = createDice(6, 2, 3);
+
+// Random result of rolling 2 six sided dice and adding 3 to the result.
+// (1..6) + (1..6) + 3
+_2d6plus3();
+// Note, this is not the same as a random int between 5..15.
+// Because each die gets rolled independently, the results are more likely to follow a normal distribution curve favoring the middle numbers (like 7) more than the edge numbers (like 2 and 12)
+
+const _2d6 = createDice(6, 2);
+const _1d6 = createDice(6);
+```
+
+### Combine multiple dice functions with `combineDice()`
+
+```
+const d6 = createDie(6);
+const d8 = createDie(8);
+const two = () => 2;
+
+const _2d6_1d8_2 = combineDice([d6, d6, d8, two]);
+
+// generate random int
+// (1..6) + (1..6) + (1..8) + 2
+_2d6_1d8_2();
+```
+
+### Dice Strings
+
+Using `parseDiceString(s)` will convert a string into a function that rolls dice based on the input. The format of the string is inspired by Tabletop RPG dice notation.
+
+`🅰️d🅱️+Ⓜ️` Where:
+
+- 🅰️ is the number of dice (default is 1)
+- 🅱️ is the number of sides on the dice
+- Ⓜ️ is an integer to add to the total
+
+**Examples**
+
+- "d6" === roll one 6-sided-die`
+- "2d6" === roll two 6-sided-dice and sum results`
+- "3d6+2" === roll three 6-sided-dice, add 2 to the sum.`
+- "2d12-2" === roll two 12-sided-dice, subtract 2 from the sum.`
+- "1d12-5+2d20+4+d4" === roll one 12-sided-die, two 20-sided-dice, and one 4-sided-die subtract one (-5 + 4) from the sum.`
+
+Whitespace and letter case are ignored.
+
+### Custom dice with `createCustomDie()`
+
+To create a die that isn't typical, you can use `createCustomDie()` and provide an array of dice face values.
+
+```
+const colors = [ "red", "orange","yellow","green","blue","indigo","violet" ];
+const colorDie = createCustomDie(colors);
+
+// Generate a random color string
+colorDie();
+
+// If the values are numerical, they can be combined with other dice functions...
+const weightedD6 = createCustomDie([1,2,3,4,5,6,6,6]);
+const d6 = createDie(6);
+const funnyDice = combineDice([d6, weightedDie]);
+```
+
+### Custom Random seed
+
+By default, the library uses `Math.random` for the rng. To use a different generator, use `init(f)` where `f` is a function that takes no arguments and returns a number, `n`, where `0.0<=n<1.0`
+
+```typescript
+const diceKit = init(randomSeed.create("my seed"));
+
+const d6 = diceKit.createDie(6);
+```
+
+### Other functions
+
+TBD. Meanwhile, please review `test` folder for examples.
+
+# Library bootstrapped with TSDX
+
+For more info, see [tsdx.io](https://tsdx.io/)
 
 ## Commands
 
@@ -30,24 +132,11 @@ Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adju
 
 Jest tests are set up to run with `npm test` or `yarn test`.
 
+You can also use `yarn test --watch` or `yarn test --coverage`
+
 ### Bundle Analysis
 
 [`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
-```
 
 ### Rollup
 
@@ -76,7 +165,7 @@ declare var __DEV__: boolean;
 
 // inside your code...
 if (__DEV__) {
-  console.log('foo');
+  console.log("foo");
 }
 ```
 

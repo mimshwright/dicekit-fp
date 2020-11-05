@@ -268,17 +268,6 @@ describe("dicekit", () => {
       });
     });
 
-    describe("constant()", () => {
-      it("Takes a number value and returns a function that always returns that number. K-combinator", () => {
-        const one = identity(1);
-
-        expect(one).toBeInstanceOf(Function);
-        expect(one()).toBe(1);
-        expect(identity(0)()).toBe(0);
-        expect(identity(999)()).toBe(999);
-      });
-    });
-
     describe("addToRoll()", () => {
       it("Takes a function that returns a number. When called, it calls the function and adds a constant value to the result.", () => {
         const d6 = createDie(6);
@@ -443,6 +432,16 @@ describe("dicekit", () => {
           const result2 = testRollXLrg(_2d6plus2d12);
           expect(min(result2)).toBe(2 * 1 + 2 * 1);
           expect(max(result2)).toBe(2 * 6 + 2 * 12);
+        });
+
+        it("Should fail if you provide a number of dice which are < 0", () => {
+          const _neg2d6 = p("-2d6");
+          const result = testRollLrg(_neg2d6);
+
+          // todo: add more helpful error.
+
+          expect(min(result)).toBe(NaN);
+          expect(max(result)).toBe(NaN);
         });
       });
     });

@@ -23,12 +23,12 @@ const _randomIntegerBetween = (r: NumberGenerator) => (
   min = 0,
 ): number => {
   // make sure max >= min
-  [max, min] = [Math.max(max, min), Math.min(max, min)];
-  min = Math.ceil(min);
-  max = Math.floor(max);
+  const [trueMax, trueMin] = [
+    Math.floor(Math.max(max, min)),
+    Math.ceil(Math.min(max, min)),
+  ];
 
-  const result = Math.floor(r() * (max - min + 1) + min);
-  return result;
+  return Math.floor(r() * (trueMax - trueMin + 1) + trueMin);
 };
 
 const _randomBoolean = (r: NumberGenerator) => (): boolean => r() > 0.5;

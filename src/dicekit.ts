@@ -12,11 +12,6 @@ import { sumArray, callAndAdd, callMultipleTimes } from "./utils";
 
 const _addToRoll = callAndAdd;
 
-const _randomNumberBetween = (r: NumberGenerator) => (
-  max = 1,
-  min = 0,
-): number => r() * (max - min) + min;
-
 // inclusive for min and max
 const _randomIntegerBetween = (r: NumberGenerator) => (
   max: number,
@@ -30,8 +25,6 @@ const _randomIntegerBetween = (r: NumberGenerator) => (
 
   return Math.floor(r() * (trueMax - trueMin + 1) + trueMin);
 };
-
-const _randomBoolean = (r: NumberGenerator) => (): boolean => r() > 0.5;
 
 const _randomElement = (r: NumberGenerator) => <T>(arr: T[]): T =>
   arr[_randomIntegerBetween(r)(arr.length - 1)];
@@ -129,10 +122,8 @@ const _parseDiceString = (r: NumberGenerator) => (diceString: string) => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const init = (r: NumberGenerator = Math.random) => ({
   random: r,
-  randomNumberBetween: _randomNumberBetween(r),
   randomIntegerBetween: _randomIntegerBetween(r),
   randomInteger: _randomIntegerBetween(r),
-  randomBoolean: _randomBoolean(r),
   randomElement: _randomElement(r),
 
   addToRoll: _addToRoll,
@@ -146,10 +137,8 @@ export const init = (r: NumberGenerator = Math.random) => ({
 
 export const {
   random,
-  randomNumberBetween,
   randomIntegerBetween,
   randomInteger,
-  randomBoolean,
   randomElement,
 
   createDie,

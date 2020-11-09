@@ -1,11 +1,9 @@
 import { NumberGenerator } from "../src/types";
 import {
   random,
-  randomNumberBetween,
   randomIntegerBetween,
   randomInteger,
   randomElement,
-  randomBoolean,
   createDie,
   createCustomDie,
   createDice,
@@ -66,9 +64,7 @@ describe("dicekit", () => {
         const tbf = (f: any) => expect(f).toBeInstanceOf(Function);
 
         tbf(diceKit.random);
-        tbf(diceKit.randomNumberBetween);
         tbf(diceKit.randomElement);
-        tbf(diceKit.randomBoolean);
         tbf(diceKit.randomInteger);
         tbf(diceKit.randomIntegerBetween);
         tbf(diceKit.createDie);
@@ -89,25 +85,6 @@ describe("dicekit", () => {
 
         expect(min(results)).toBeGreaterThan(0);
         expect(max(results)).toBeLessThan(1);
-      });
-    });
-
-    describe("randomNumberBetween()", () => {
-      it("Returns a number (not an integer) between low and hi", () => {
-        const results = testRollSm(() => randomNumberBetween(4, 2));
-
-        expect(min(results)).toBeGreaterThan(2);
-        expect(min(results)).toBeLessThan(2.5);
-
-        expect(max(results)).toBeGreaterThan(3.5);
-        expect(max(results)).toBeLessThan(4);
-      });
-
-      it("Defaults to 0.0 ~ 0.99999...", () => {
-        const results = testRollSm(() => randomNumberBetween());
-
-        expect(min(results)).toBeGreaterThanOrEqual(0);
-        expect(min(results)).toBeLessThan(1.0);
       });
     });
 
@@ -158,16 +135,6 @@ describe("dicekit", () => {
 
         expect(min(results)).toBe(min(resultsBetween));
         expect(max(results)).toBe(max(resultsBetween));
-      });
-    });
-    describe("randomBoolean()", () => {
-      it("Is syntactic sugar for randomIntegerBetween(0,1) coerced to a boolean value", () => {
-        const results = testRoll(100)(randomBoolean);
-        const trueCount = results.filter((b) => b === true).length;
-        const falseCount = results.filter((b) => b === false).length;
-
-        expect(trueCount).toBeGreaterThan(35);
-        expect(falseCount).toBe(100 - trueCount);
       });
     });
 

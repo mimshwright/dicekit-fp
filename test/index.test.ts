@@ -1,36 +1,43 @@
+import {
+  identity,
+  testRollSm,
+  testRollMed,
+  testRollLrg,
+  testRollXLrg,
+  min,
+  max,
+  count,
+} from "../src/utils";
 import { NumberGenerator } from "../src/types";
 import {
-  random,
-  randomNumberBetween,
-  randomIntegerBetween,
-  randomInteger,
-  randomElement,
-  randomBoolean,
+  createDieWith,
   createDie,
+  createCustomDieWith,
   createCustomDie,
+  createDiceWith,
   createDice,
+  parseDiceStringWith,
+  parseDiceString,
   multipleDice,
   combineDice,
-  parseDiceString,
   addToRoll,
-  init,
 } from "../src/index";
 
-import { identity, callMultipleTimes, min, max, count } from "../src/utils";
-
-const testRoll = callMultipleTimes;
-
-const testRollSm = testRoll(200);
-const testRollMed = testRoll(1000);
-const testRollLrg = testRoll(5000);
-const testRollXLrg = testRoll(100000);
-
 describe("dicekit", () => {
-  describe("init()", () => {
-    describe("Creates a suite of dice functions mapped to your choice of RNG.", () => {
-      it("Should use Math.random by default", () => {
-        const diceKit = init();
-        expect(diceKit.random).toBe(Math.random);
+  const tbf = (f: any) => expect(f).toBeInstanceOf(Function);
+  describe("createDieWith() &c.", () => {
+    describe("Creates a die with your choice of RNG.", () => {
+      it("Every random function has a version that allows you to specify the RNG.", () => {
+        tbf(createDieWith);
+        tbf(createDiceWith);
+        tbf(createCustomDieWith);
+        tbf(parseDiceStringWith);
+      });
+      it("Versions that use Math.random by default are also exported.", () => {
+        tbf(createDie);
+        tbf(createDice);
+        tbf(createCustomDie);
+        tbf(parseDiceString);
       });
 
       it("Can take any function that returns numbers, n, where 0.0>=n<1.0 ", () => {
@@ -42,150 +49,25 @@ describe("dicekit", () => {
           return result;
         };
 
-        const diceKit = init(sequencedNumberGenerator);
-        const r = () => diceKit.randomIntegerBetween(10, 0);
-
-        expect(r()).toBe(0);
-        expect(r()).toBe(2);
-        expect(r()).toBe(4);
-        expect(r()).toBe(6);
-        expect(r()).toBe(8);
-        expect(r()).toBe(10);
-
-        const die = diceKit.createDie(6);
+        const die = createDieWith(sequencedNumberGenerator)(6);
         expect(die()).toBe(1);
         expect(die()).toBe(2);
         expect(die()).toBe(3);
         expect(die()).toBe(4);
         expect(die()).toBe(5);
         expect(die()).toBe(6);
-      });
-
-      it("All public functions are part of the object returned by init().", () => {
-        const diceKit = init();
-        const tbf = (f: any) => expect(f).toBeInstanceOf(Function);
-
-        tbf(diceKit.random);
-        tbf(diceKit.randomNumberBetween);
-        tbf(diceKit.randomElement);
-        tbf(diceKit.randomBoolean);
-        tbf(diceKit.randomInteger);
-        tbf(diceKit.randomIntegerBetween);
-        tbf(diceKit.createDie);
-        tbf(diceKit.createCustomDie);
-        tbf(diceKit.createDice);
-        tbf(diceKit.combineDice);
-        tbf(diceKit.multipleDice);
-        tbf(diceKit.addToRoll);
-        tbf(diceKit.parseDiceString);
+        expect(die()).toBe(1);
       });
     });
   });
 
   describe("[WARNING: In rare cases, these tests can fail due to random values. Please test again if this happens or raise the number of testRolls!]", () => {
-    describe("random()", () => {
-      it("Returns a value between 0 and 1", () => {
-        const results = testRollMed(random);
-
-        expect(min(results)).toBeGreaterThan(0);
-        expect(max(results)).toBeLessThan(1);
-      });
-    });
-
-    describe("randomNumberBetween()", () => {
-      it("Returns a number (not an integer) between low and hi", () => {
-        const results = testRollSm(() => randomNumberBetween(4, 2));
-
-        expect(min(results)).toBeGreaterThan(2);
-        expect(min(results)).toBeLessThan(2.5);
-
-        expect(max(results)).toBeGreaterThan(3.5);
-        expect(max(results)).toBeLessThan(4);
-      });
-
-      it("Defaults to 0.0 ~ 0.99999...", () => {
-        const results = testRollSm(() => randomNumberBetween());
-
-        expect(min(results)).toBeGreaterThanOrEqual(0);
-        expect(min(results)).toBeLessThan(1.0);
-      });
-    });
-
-    describe("randomIntegerBetween()", () => {
-      it("Creates random numbers in a range.", () => {
-        const results = testRollMed(() => randomIntegerBetween(50, 10));
-
-        expect(min(results)).toBe(10);
-        expect(max(results)).toBe(50);
-      });
-
-      it("Low value defaults to 0.", () => {
-        const results = testRollMed(() => randomIntegerBetween(10));
-
-        expect(min(results)).toBe(0);
-        expect(max(results)).toBe(10);
-      });
-
-      it("Negative numbers work.", () => {
-        const results = testRollMed(() => randomIntegerBetween(-10, -50));
-
-        expect(max(results)).toBe(-10);
-        expect(min(results)).toBe(-50);
-      });
-
-      it("Range is inclusive.", () => {
-        const results = testRollSm(() => randomIntegerBetween(2, 1));
-
-        expect(min(results)).toBe(1);
-        expect(max(results)).toBe(2);
-      });
-
-      it("Expects max to be the first parameter and min to be the second, but if min > max, it switches them automatically.", () => {
-        const resultsIncorrect = testRollSm(() => randomIntegerBetween(1, 3));
-        const resultsCorrect = testRollSm(() => randomIntegerBetween(3, 1));
-
-        expect(min(resultsCorrect)).toBe(1);
-        expect(min(resultsIncorrect)).toBe(1);
-        expect(max(resultsCorrect)).toBe(3);
-        expect(max(resultsIncorrect)).toBe(3);
-      });
-    });
-
-    describe("randomInteger()", () => {
-      it("Is a unary form of randomIntegerBetween(). Only takes a maximum and assumes minimum is 0.", () => {
-        const results = testRollMed(() => randomInteger(10));
-        const resultsBetween = testRollMed(() => randomIntegerBetween(10, 0));
-
-        expect(min(results)).toBe(min(resultsBetween));
-        expect(max(results)).toBe(max(resultsBetween));
-      });
-    });
-    describe("randomBoolean()", () => {
-      it("Is syntactic sugar for randomIntegerBetween(0,1) coerced to a boolean value", () => {
-        const results = testRoll(100)(randomBoolean);
-        const trueCount = results.filter((b) => b === true).length;
-        const falseCount = results.filter((b) => b === false).length;
-
-        expect(trueCount).toBeGreaterThan(35);
-        expect(falseCount).toBe(100 - trueCount);
-      });
-    });
-
-    describe("randomElement()", () => {
-      it("Returns a random element from the array.", () => {
-        const results = testRollMed(() => randomElement([0, 1, 2, 3, 4, 5]));
-
-        expect(min(results)).toBe(0);
-        expect(max(results)).toBe(5);
-      });
-    });
-
     describe("createDie()", () => {
       it("Returns a function that generates random numbers between 1 and 'sides'", () => {
         const d6 = createDie(6);
         const results = testRollSm(d6);
 
-        expect(d6).toBeInstanceOf(Function);
+        tbf(d6);
         expect(min(results)).toBe(1);
         expect(max(results)).toBe(6);
       });
@@ -258,8 +140,8 @@ describe("dicekit", () => {
         const d6x3 = multipleD6(3);
         const results = testRollLrg(d6x3);
 
-        expect(multipleD6).toBeInstanceOf(Function);
-        expect(d6x3).toBeInstanceOf(Function);
+        tbf(multipleD6);
+        tbf(d6x3);
 
         expect(min(results)).toBe(3);
         expect(max(results)).toBe(18);
@@ -323,12 +205,12 @@ describe("dicekit", () => {
           const one = identity(1);
           const combined = combineDice([one]);
 
-          expect(combineDice).toBeInstanceOf(Function);
-          expect(combined).toBeInstanceOf(Function);
+          tbf(combineDice);
+          tbf(combined);
           expect(combined()).toBe(1);
         });
 
-        it("Array must not be empty", () => {
+        it("Will throw an error if array is empty", () => {
           expect(() => {
             combineDice([]);
           }).toThrow();
@@ -339,7 +221,7 @@ describe("dicekit", () => {
           const plus2 = identity(2);
 
           const _2d6plus2 = combineDice([d6, d6, plus2]);
-          expect(_2d6plus2).toBeInstanceOf(Function);
+          tbf(_2d6plus2);
 
           const results = testRollMed(_2d6plus2);
           expect(min(results)).toBe(4);

@@ -210,7 +210,7 @@ describe("dicekit", () => {
           expect(combined()).toBe(1);
         });
 
-        it("Array must not be empty", () => {
+        it("Will throw an error if array is empty", () => {
           expect(() => {
             combineDice([]);
           }).toThrow();

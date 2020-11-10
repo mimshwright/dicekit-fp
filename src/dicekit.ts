@@ -15,21 +15,24 @@ import {
 } from "./utils";
 
 const { random: defaultRNG } = Math;
-
-export const createDieWith = (r: NumberGenerator) => (
-  sides: Sides,
-): NumberGenerator => () => randomIntegerBetween(r)(sides, 1);
-export const createDie = createDieWith(defaultRNG);
-
-export const createCustomDieWith = (r: NumberGenerator) => <T>(
-  sides: T[],
-) => (): T => randomElement(r)(sides);
-export const createCustomDie = createCustomDieWith(defaultRNG);
+const sumResultsReducer = (total: number, generateNumber: NumberGenerator) =>
+  total + generateNumber();
 
 export const addToRoll = callAndAdd;
 export const multipleDice = (die: NumberGenerator) => (
   multiplier: Multiplier,
-): NumberGenerator => () => sumArray(callMultipleTimes(multiplier)(die));
+): NumberGenerator => () => {
+  const callXTimes = callMultipleTimes(multiplier);
+  return sumArray(callXTimes(die));
+};
+
+export const createDieWith = (r: NumberGenerator) => (
+  sides: Sides,
+): NumberGenerator => {
+  const randInt = randomIntegerBetween(r);
+  return () => randInt(sides, 1);
+};
+export const createDie = createDieWith(defaultRNG);
 
 export const createDiceWith = (r: NumberGenerator) => (
   sides: Sides,
@@ -38,16 +41,27 @@ export const createDiceWith = (r: NumberGenerator) => (
 ): NumberGenerator => {
   const die = createDieWith(r)(sides);
   const dice = multipleDice(die)(multiplier);
-  return callAndAdd(modifier)(dice);
+  const addModifier = addToRoll(modifier);
+  return addModifier(dice);
 };
 export const createDice = createDiceWith(defaultRNG);
 
 export const combineDice = (dice: NumberGenerator[]): NumberGenerator => {
   if (dice.length === 0) {
-    throw new Error("The dice array must contain at least one roll function.");
+    throw new Error(
+      "The dice array must contain at least one function that returns a number.",
+    );
   }
-  return () => dice.reduce((acc: number, roll) => acc + roll(), 0);
+  return () => dice.reduce(sumResultsReducer, 0);
 };
+
+export const createCustomDieWith = (r: NumberGenerator) => <T>(
+  sides: T[],
+): (() => T) => {
+  const randomElementWithR = randomElement(r);
+  return (): T => randomElementWithR(sides);
+};
+export const createCustomDie = createCustomDieWith(defaultRNG);
 
 const tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
   const sanitized = diceString
@@ -86,9 +100,11 @@ export const parseDiceStringWith = (r: NumberGenerator) => (
     diceString,
   );
 
+  const createDiceWithR = createDiceWith(r);
   const addModifier = callAndAdd(modifier);
+
   const dice = diceTokens.map(([multiplier, sides]) =>
-    createDiceWith(r)(sides, multiplier),
+    createDiceWithR(sides, multiplier),
   );
 
   return addModifier(combineDice(dice));

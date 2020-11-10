@@ -1,3 +1,13 @@
+import {
+  identity,
+  testRollSm,
+  testRollMed,
+  testRollLrg,
+  testRollXLrg,
+  min,
+  max,
+  count,
+} from "../src/utils";
 import { NumberGenerator } from "../src/types";
 import {
   createDie,
@@ -9,15 +19,6 @@ import {
   addToRoll,
   init,
 } from "../src/index";
-
-import { identity, callMultipleTimes, min, max, count } from "../src/utils";
-
-const testRoll = callMultipleTimes;
-
-const testRollSm = testRoll(200);
-const testRollMed = testRoll(1000);
-const testRollLrg = testRoll(5000);
-const testRollXLrg = testRoll(100000);
 
 describe("dicekit", () => {
   describe("init()", () => {

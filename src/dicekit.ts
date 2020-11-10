@@ -6,32 +6,21 @@ import {
   DiceTokensWithModifier,
   DiceToken,
 } from "./types";
-import { sumArray, callAndAdd, callMultipleTimes } from "./utils";
+import {
+  sumArray,
+  callAndAdd,
+  callMultipleTimes,
+  randomElement,
+  randomIntegerBetween,
+} from "./utils";
 
 /// // RNGs
 
-// inclusive for min and max
-const _randomIntegerBetween = (r: NumberGenerator) => (
-  max: number,
-  min = 0,
-): number => {
-  // make sure max >= min
-  const [trueMax, trueMin] = [
-    Math.floor(Math.max(max, min)),
-    Math.ceil(Math.min(max, min)),
-  ];
-
-  return Math.floor(r() * (trueMax - trueMin + 1) + trueMin);
-};
-
-const _randomElement = (r: NumberGenerator) => <T>(arr: T[]): T =>
-  arr[_randomIntegerBetween(r)(arr.length - 1)];
-
 const _createDie = (r: NumberGenerator) => (sides: Sides) => () =>
-  _randomIntegerBetween(r)(sides, 1);
+  randomIntegerBetween(r)(sides, 1);
 
 const _createCustomDie = (r: NumberGenerator) => <T>(sides: T[]) => () =>
-  _randomElement(r)(sides);
+  randomElement(r)(sides);
 
 const _multipleDice = (die: NumberGenerator) => (
   multiplier: Multiplier,
@@ -54,7 +43,7 @@ const _combineDice = (dice: NumberGenerator[]): NumberGenerator => {
   return () => dice.reduce((acc: number, roll) => acc + roll(), 0);
 };
 
-const _tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
+const tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
   // fix formatting
   const sanitized = diceString
     // make case uniform
@@ -105,7 +94,7 @@ const _tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
 };
 
 const _parseDiceString = (r: NumberGenerator) => (diceString: string) => {
-  const [diceTokens, modifier]: DiceTokensWithModifier = _tokenizeDiceString(
+  const [diceTokens, modifier]: DiceTokensWithModifier = tokenizeDiceString(
     diceString,
   );
 

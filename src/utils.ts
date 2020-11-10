@@ -41,3 +41,26 @@ export const callAndAdd = (modifier: Modifier) => (
 // count :: Number n => a -> a[] -> n
 export const count = <T>(match: T) => (list: T[]): number =>
   list.filter((element) => element === match).length;
+
+// inclusive for min and max
+export const randomIntegerBetween = (r: NumberGenerator) => (
+  possiblyMax: number,
+  possiblyMin = 0,
+): number => {
+  // make sure max >= min
+  const [trueMax, trueMin] = [
+    Math.floor(Math.max(possiblyMax, possiblyMin)),
+    Math.ceil(Math.min(possiblyMax, possiblyMin)),
+  ];
+
+  return Math.floor(r() * (trueMax - trueMin + 1) + trueMin);
+};
+
+export const randomElement = (r: NumberGenerator) => <T>(arr: T[]): T =>
+  arr[randomIntegerBetween(r)(arr.length - 1)];
+
+export const testRoll = callMultipleTimes;
+export const testRollSm = testRoll(200);
+export const testRollMed = testRoll(1000);
+export const testRollLrg = testRoll(5000);
+export const testRollXLrg = testRoll(100000);

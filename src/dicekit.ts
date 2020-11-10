@@ -50,50 +50,30 @@ export const combineDice = (dice: NumberGenerator[]): NumberGenerator => {
 };
 
 const tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
-  // fix formatting
   const sanitized = diceString
-    // make case uniform
-    .toLowerCase()
-    // remove whitespace
-    .replace(/\s/g, "")
-    // add plus signs before negative numbers
-    .replace("-", "+-");
+    .toLowerCase() // make case uniform
+    .replace(/\s/g, "") // remove whitespace
+    .replace("-", "+-"); // add plus signs before negative numbers
 
-  // Split on plus signs
   const tokens = sanitized.split("+");
 
   // filter out dice tokens
   const diceTokenStrings = tokens
-    // dice tokens contain a "d"
-    .filter((s) => s.includes("d"))
-    // add an implicit 1 to any dice without multipliers
-    .map((s) => s.replace(/^d/g, "1d"));
+    .filter((s) => s.includes("d")) // dice tokens contain a "d"
+    .map((s) => s.replace(/^d/g, "1d")); // add an implicit 1 to any dice without multipliers
 
   // filter out modifier tokens
   const modifierTokens = tokens
-    // these tokens contain no "d"
-    .filter((s) => s.includes("d") === false)
-    // Convert to integers
-    .map((s) => parseInt(s, 10));
+    .filter((s) => s.includes("d") === false) // these tokens contain no "d"
+    .map((s) => parseInt(s, 10)); // Convert to integers
 
   // create tuples ([Multiplier, Sides]) from the dice tokens.
   const diceTokens: DiceToken[] = diceTokenStrings.map(
-    // Split on "d"
-    (dieToken) =>
-      dieToken
-        .split("d")
-        // convert to ints.
-        .map((s) => parseInt(s, 10)) as DiceToken,
+    (dieToken) => dieToken.split("d").map((s) => parseInt(s, 10)) as DiceToken,
   );
 
-  // combine the modifier into one number
+  // Reduce the modifier to one number
   const modifier: Modifier = sumArray(modifierTokens);
-
-  // console.log(`parseDiceString("${diceString}");`);
-  // console.log(`  Sanitized string: "${sanitized}"`);
-  // console.log(`  Extracted tokens: ${tokens}`);
-  // console.log(`  Dice Tokens: ${diceTokens.map((d) => d.join("x")).join(",")}`);
-  // console.log(`  Total modifier: ${modifier}`);
 
   // return a tuple containing the dice token array and the modifier.
   return [diceTokens, modifier];

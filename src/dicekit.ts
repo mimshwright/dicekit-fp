@@ -10,8 +10,6 @@ import { sumArray, callAndAdd, callMultipleTimes } from "./utils";
 
 /// // RNGs
 
-const _addToRoll = callAndAdd;
-
 // inclusive for min and max
 const _randomIntegerBetween = (r: NumberGenerator) => (
   max: number,
@@ -46,7 +44,7 @@ const _createDice = (r: NumberGenerator) => (
 ): NumberGenerator => {
   const die = _createDie(r)(sides);
   const dice = _multipleDice(die)(multiplier);
-  return _addToRoll(modifier)(dice);
+  return callAndAdd(modifier)(dice);
 };
 
 const _combineDice = (dice: NumberGenerator[]): NumberGenerator => {
@@ -111,7 +109,7 @@ const _parseDiceString = (r: NumberGenerator) => (diceString: string) => {
     diceString,
   );
 
-  const addModifier = _addToRoll(modifier);
+  const addModifier = callAndAdd(modifier);
   const dice = diceTokens.map(([multiplier, sides]) =>
     _createDice(r)(sides, multiplier),
   );
@@ -121,7 +119,7 @@ const _parseDiceString = (r: NumberGenerator) => (diceString: string) => {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const init = (r: NumberGenerator = Math.random) => ({
-  addToRoll: _addToRoll,
+  addToRoll: callAndAdd,
   createDie: _createDie(r),
   createCustomDie: _createCustomDie(r),
   multipleDice: _multipleDice,

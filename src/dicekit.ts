@@ -121,11 +121,6 @@ const _parseDiceString = (r: NumberGenerator) => (diceString: string) => {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const init = (r: NumberGenerator = Math.random) => ({
-  random: r,
-  randomIntegerBetween: _randomIntegerBetween(r),
-  randomInteger: _randomIntegerBetween(r),
-  randomElement: _randomElement(r),
-
   addToRoll: _addToRoll,
   createDie: _createDie(r),
   createCustomDie: _createCustomDie(r),
@@ -136,11 +131,6 @@ export const init = (r: NumberGenerator = Math.random) => ({
 });
 
 export const {
-  random,
-  randomIntegerBetween,
-  randomInteger,
-  randomElement,
-
   createDie,
   createCustomDie,
   multipleDice,

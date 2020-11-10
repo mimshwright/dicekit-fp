@@ -1,2 +1,2 @@
-export * from "./dicekit";
 export * from "./types";
+export * from "./dicekit";

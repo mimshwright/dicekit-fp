@@ -10,19 +10,36 @@ import {
 } from "../src/utils";
 import { NumberGenerator } from "../src/types";
 import {
+  createDieWith,
   createDie,
+  createCustomDieWith,
   createCustomDie,
+  createDiceWith,
   createDice,
+  parseDiceStringWith,
+  parseDiceString,
   multipleDice,
   combineDice,
-  parseDiceString,
   addToRoll,
-  init,
 } from "../src/index";
 
 describe("dicekit", () => {
-  describe("init()", () => {
-    describe("Creates a suite of dice functions mapped to your choice of RNG.", () => {
+  const tbf = (f: any) => expect(f).toBeInstanceOf(Function);
+  describe("createDieWith() &c.", () => {
+    describe("Creates a die with your choice of RNG.", () => {
+      it("Every random function has a version that allows you to specify the RNG.", () => {
+        tbf(createDieWith);
+        tbf(createDiceWith);
+        tbf(createCustomDieWith);
+        tbf(parseDiceStringWith);
+      });
+      it("Versions that use Math.random by default are also exported.", () => {
+        tbf(createDie);
+        tbf(createDice);
+        tbf(createCustomDie);
+        tbf(parseDiceString);
+      });
+
       it("Can take any function that returns numbers, n, where 0.0>=n<1.0 ", () => {
         const sequence = [0.0, 0.2, 0.4, 0.6, 0.8, 0.99999999];
         let i = 0;
@@ -32,27 +49,14 @@ describe("dicekit", () => {
           return result;
         };
 
-        const diceKit = init(sequencedNumberGenerator);
-        const die = diceKit.createDie(6);
+        const die = createDieWith(sequencedNumberGenerator)(6);
         expect(die()).toBe(1);
         expect(die()).toBe(2);
         expect(die()).toBe(3);
         expect(die()).toBe(4);
         expect(die()).toBe(5);
         expect(die()).toBe(6);
-      });
-
-      it("All public functions are part of the object returned by init().", () => {
-        const diceKit = init();
-        const tbf = (f: any) => expect(f).toBeInstanceOf(Function);
-
-        tbf(diceKit.createDie);
-        tbf(diceKit.createCustomDie);
-        tbf(diceKit.createDice);
-        tbf(diceKit.combineDice);
-        tbf(diceKit.multipleDice);
-        tbf(diceKit.addToRoll);
-        tbf(diceKit.parseDiceString);
+        expect(die()).toBe(1);
       });
     });
   });
@@ -63,7 +67,7 @@ describe("dicekit", () => {
         const d6 = createDie(6);
         const results = testRollSm(d6);
 
-        expect(d6).toBeInstanceOf(Function);
+        tbf(d6);
         expect(min(results)).toBe(1);
         expect(max(results)).toBe(6);
       });
@@ -136,8 +140,8 @@ describe("dicekit", () => {
         const d6x3 = multipleD6(3);
         const results = testRollLrg(d6x3);
 
-        expect(multipleD6).toBeInstanceOf(Function);
-        expect(d6x3).toBeInstanceOf(Function);
+        tbf(multipleD6);
+        tbf(d6x3);
 
         expect(min(results)).toBe(3);
         expect(max(results)).toBe(18);
@@ -201,8 +205,8 @@ describe("dicekit", () => {
           const one = identity(1);
           const combined = combineDice([one]);
 
-          expect(combineDice).toBeInstanceOf(Function);
-          expect(combined).toBeInstanceOf(Function);
+          tbf(combineDice);
+          tbf(combined);
           expect(combined()).toBe(1);
         });
 
@@ -217,7 +221,7 @@ describe("dicekit", () => {
           const plus2 = identity(2);
 
           const _2d6plus2 = combineDice([d6, d6, plus2]);
-          expect(_2d6plus2).toBeInstanceOf(Function);
+          tbf(_2d6plus2);
 
           const results = testRollMed(_2d6plus2);
           expect(min(results)).toBe(4);

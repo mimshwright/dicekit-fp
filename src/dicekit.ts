@@ -14,29 +14,35 @@ import {
   randomIntegerBetween,
 } from "./utils";
 
-/// // RNGs
+const { random: defaultRNG } = Math;
 
-const _createDie = (r: NumberGenerator) => (sides: Sides) => () =>
-  randomIntegerBetween(r)(sides, 1);
+export const createDieWith = (r: NumberGenerator) => (
+  sides: Sides,
+): NumberGenerator => () => randomIntegerBetween(r)(sides, 1);
+export const createDie = createDieWith(defaultRNG);
 
-const _createCustomDie = (r: NumberGenerator) => <T>(sides: T[]) => () =>
-  randomElement(r)(sides);
+export const createCustomDieWith = (r: NumberGenerator) => <T>(
+  sides: T[],
+) => (): T => randomElement(r)(sides);
+export const createCustomDie = createCustomDieWith(defaultRNG);
 
-const _multipleDice = (die: NumberGenerator) => (
+export const addToRoll = callAndAdd;
+export const multipleDice = (die: NumberGenerator) => (
   multiplier: Multiplier,
 ): NumberGenerator => () => sumArray(callMultipleTimes(multiplier)(die));
 
-const _createDice = (r: NumberGenerator) => (
+export const createDiceWith = (r: NumberGenerator) => (
   sides: Sides,
   multiplier: Multiplier = 1,
   modifier: Modifier = 0,
 ): NumberGenerator => {
-  const die = _createDie(r)(sides);
-  const dice = _multipleDice(die)(multiplier);
+  const die = createDieWith(r)(sides);
+  const dice = multipleDice(die)(multiplier);
   return callAndAdd(modifier)(dice);
 };
+export const createDice = createDiceWith(defaultRNG);
 
-const _combineDice = (dice: NumberGenerator[]): NumberGenerator => {
+export const combineDice = (dice: NumberGenerator[]): NumberGenerator => {
   if (dice.length === 0) {
     throw new Error("The dice array must contain at least one roll function.");
   }
@@ -93,36 +99,19 @@ const tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
   return [diceTokens, modifier];
 };
 
-const _parseDiceString = (r: NumberGenerator) => (diceString: string) => {
+export const parseDiceStringWith = (r: NumberGenerator) => (
+  diceString: string,
+): NumberGenerator => {
   const [diceTokens, modifier]: DiceTokensWithModifier = tokenizeDiceString(
     diceString,
   );
 
   const addModifier = callAndAdd(modifier);
   const dice = diceTokens.map(([multiplier, sides]) =>
-    _createDice(r)(sides, multiplier),
+    createDiceWith(r)(sides, multiplier),
   );
 
-  return addModifier(_combineDice(dice));
+  return addModifier(combineDice(dice));
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const init = (r: NumberGenerator = Math.random) => ({
-  addToRoll: callAndAdd,
-  createDie: _createDie(r),
-  createCustomDie: _createCustomDie(r),
-  multipleDice: _multipleDice,
-  createDice: _createDice(r),
-  combineDice: _combineDice,
-  parseDiceString: _parseDiceString(r),
-});
-
-export const {
-  createDie,
-  createCustomDie,
-  multipleDice,
-  addToRoll,
-  createDice,
-  combineDice,
-  parseDiceString,
-} = init(Math.random);
+export const parseDiceString = parseDiceStringWith(defaultRNG);

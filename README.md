@@ -57,11 +57,11 @@ _2d6_1d8_2();
 
 Using `parseDiceString(s)` will convert a string into a function that rolls dice based on the input. The format of the string is inspired by Tabletop RPG dice notation.
 
-`🅰️d🅱️+Ⓜ️` Where:
+`${multiplier}d${sides}+${modifier}` Where:
 
-- 🅰️ is the number of dice (default is 1)
-- 🅱️ is the number of sides on the dice
-- Ⓜ️ is an integer to add to the total
+- `multiplier is the number of dice (default is 1)
+- `sides` is the number of sides on the dice. The range will be `1` to `sides`, inclusive.
+- `modifier` is an integer to add to the total
 
 **Examples**
 

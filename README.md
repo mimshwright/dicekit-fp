@@ -1,6 +1,6 @@
 # dicekit-fp
 
-A functional-programming-friendly library for rolling virtual dice. Provides pure-functional way to create random numbers and dice (functions that create random integers), combine and modiify the dice results, and convert strings like "2d6+2" to functions.
+A functional-programming-friendly library for rolling virtual dice. It provides pure-functional way to create random numbers and dice (functions that create random integers), combine and modiify the dice results, and convert strings like "2d6+2" to functions. It has no dependencies and is about 2KB minified.
 
 Instead of using objects, the library creates random number generators based on the parameters you provide. The library uses higher-order functions to modify the results in order to modify or multiply the results of the dice rolls. Most of the functions return a `() => number` (aliased in the Typescript code as `NumberGenerator`).
 

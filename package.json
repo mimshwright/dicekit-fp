@@ -81,5 +81,8 @@
       "path": "dist/dicekit.esm.js",
       "limit": "10 KB"
     }
-  ]
+  ],
+  "dependencies": {
+    "yarn": "^1.22.10"
+  }
 }

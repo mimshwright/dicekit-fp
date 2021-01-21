@@ -2,7 +2,9 @@
 
 A functional-programming-friendly library for rolling virtual dice. Provides pure-functional way to create random numbers and dice (functions that create random integers), combine and modiify the dice results, and convert strings like "2d6+2" to functions.
 
-Instead of using objects, the library creates random number generators based on the parameters you provide. The library uses higher-order functions to modify the results in order to modify or multiply the results of the dice rolls. Most of the functions return a `() => number` (aliased in the Typescript code as `NumberGenerator`)
+Instead of using objects, the library creates random number generators based on the parameters you provide. The library uses higher-order functions to modify the results in order to modify or multiply the results of the dice rolls. Most of the functions return a `() => number` (aliased in the Typescript code as `NumberGenerator`).
+
+The functions that produce random numbers, such as `createDie()`, typicially have two versions: one that takes a random number generator (RNG) as the first parameter and have the suffix `With` as in `createDieWith()`, the other which is already seeded with `Math.random()` as the RNG as in `createDie()`
 
 ## Use
 
@@ -27,6 +29,7 @@ const devilDie = createDie(666);
 
 ```typescript
 // takes a number of faces, number of dice (default 1), and modifier (default +0)
+// 2d6+3
 const _2d6plus3 = createDice(6, 2, 3);
 
 // Random result of rolling 2 six sided dice and adding 3 to the result.
@@ -35,7 +38,9 @@ _2d6plus3();
 // Note, this is not the same as a random int between 5..15.
 // Because each die gets rolled independently, the results are more likely to follow a normal distribution curve favoring the middle numbers (like 7) more than the edge numbers (like 2 and 12)
 
+// 2d6+0
 const _2d6 = createDice(6, 2);
+// 1d6+0
 const _1d6 = createDice(6);
 ```
 
@@ -44,8 +49,10 @@ const _1d6 = createDice(6);
 ```typescript
 const d6 = createDie(6);
 const d8 = createDie(8);
+// always returns 2
 const two = () => 2;
 
+// 2d6+1d8+2
 const _2d6_1d8_2 = combineDice([d6, d6, d8, two]);
 
 // generate random int
@@ -62,6 +69,7 @@ Using `parseDiceString(s)` will convert a string into a function that rolls dice
 Where:
 
 - `multiplier is the number of dice (default is 1)
+- Use `d` or `D` to separate the multiplier from the number of sides on the dice.
 - `sides` is the number of sides on the dice. The range will be `1` to `sides`, inclusive.
 - `modifier` is an integer to add to the total
 
@@ -71,7 +79,7 @@ Where:
 - "2d6" === roll two 6-sided-dice and sum results`
 - "3d6+2" === roll three 6-sided-dice, add 2 to the sum.`
 - "2d12-2" === roll two 12-sided-dice, subtract 2 from the sum.`
-- "1d12-5+2d20+4+d4" === roll one 12-sided-die, two 20-sided-dice, and one 4-sided-die subtract one (-5 + 4) from the sum.`
+- "1d12-5+2d20+4+d4" === roll one 12-sided-die, two 20-sided-dice, and one 4-sided-die, subtract 5 and add 4 to the sum.`
 
 Whitespace and letter case are ignored.
 
@@ -80,31 +88,38 @@ Whitespace and letter case are ignored.
 To create a die that isn't typical, you can use `createCustomDie()` and provide an array of dice face values.
 
 ```typescript
+// Generate a random color string
 const colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
 const colorDie = createCustomDie(colors);
+colorDie(); // "blue"
 
-// Generate a random color string
-colorDie();
+// Create a die that lands on 6 more often.
+const weightedD6 = createCustomDie([1, 2, 3, 4, 5, 6, 6, 6]);
+weightedD6(); // 6, probably
 
 // If the values are numerical, they can be combined with other dice functions...
-const weightedD6 = createCustomDie([1, 2, 3, 4, 5, 6, 6, 6]);
-const d6 = createDie(6);
-const funnyDice = combineDice([d6, weightedDie]);
+const weightedDice = combineDice([weightedDie, weightedDie]);
 ```
 
 ### Custom Random seed
 
-By default, the library uses `Math.random` for the rng. To use a different generator, use `init(f)` where `f` is a function that takes no arguments and returns a number, `n`, where `0.0<=n<1.0`
+All the fuctions that rely on a random number generator come with a version that uses `Math.random` for the RNG. To use a different generator, use the alternate versions with the suffix `With` as in `createDieWith(f)` where `f` is a function that takes no arguments and returns a number, `n`, where `0.0<=n<1.0`
 
 ```typescript
-const diceKit = init(randomSeed.create("my seed"));
+const myRNG = randomSeed.create("my seed");
+const createDieSeeded = createDieWith(myRNG);
 
-const d6 = diceKit.createDie(6);
+const d6 = createDieSeeded(6);
+d6(); // uses myRNG for generating numbers.
 ```
 
 ### Other functions
 
 TBD. Meanwhile, please review `test` folder for examples.
+
+_Below this line is boilerplate from TSDX_
+
+=====
 
 # Library bootstrapped with TSDX
 

@@ -1,7 +1,19 @@
 {
   "name": "dicekit-fp",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "license": "MIT",
+  "keywords": [
+    "functional",
+    "fp",
+    "pure",
+    "dice",
+    "die",
+    "d6",
+    "dnd",
+    "random",
+    "rng",
+    "game"
+  ],
   "author": "Mims Wright",
   "main": "dist/index.js",
   "module": "dist/dicekit.esm.js",

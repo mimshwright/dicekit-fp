@@ -61,6 +61,7 @@
     "typescript": "^4.0.3"
   },
   "optionalDependencies": {
+    "np": "^7.2.0",
     "yarn": "^1.22.10"
   },
   "husky": {
@@ -81,8 +82,5 @@
       "path": "dist/dicekit.esm.js",
       "limit": "10 KB"
     }
-  ],
-  "dependencies": {
-    "yarn": "^1.22.10"
-  }
+  ]
 }

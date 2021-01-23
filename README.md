@@ -68,7 +68,7 @@ Using `parseDiceString(s)` will convert a string into a function that rolls dice
 
 Where:
 
-- `multiplier is the number of dice (default is 1)
+- `multiplier` is the number of dice (default is 1)
 - Use `d` or `D` to separate the multiplier from the number of sides on the dice.
 - `sides` is the number of sides on the dice. The range will be `1` to `sides`, inclusive.
 - `modifier` is an integer to add to the total

@@ -75,11 +75,11 @@ Where:
 
 **Examples**
 
-- "d6" === roll one 6-sided-die`
-- "2d6" === roll two 6-sided-dice and sum results`
-- "3d6+2" === roll three 6-sided-dice, add 2 to the sum.`
-- "2d12-2" === roll two 12-sided-dice, subtract 2 from the sum.`
-- "1d12-5+2d20+4+d4" === roll one 12-sided-die, two 20-sided-dice, and one 4-sided-die, subtract 5 and add 4 to the sum.`
+- "d6" -> roll one 6-sided-die`
+- "2d6" -> roll two 6-sided-dice and sum results`
+- "3d6+2" -> roll three 6-sided-dice, add 2 to the sum.`
+- "2d12-2" -> roll two 12-sided-dice, subtract 2 from the sum.`
+- "1d12-5+2d20+4+d4" -> roll one 12-sided-die, two 20-sided-dice, and one 4-sided-die, subtract 5 and add 4 to the sum.`
 
 Whitespace and letter case are ignored.
 

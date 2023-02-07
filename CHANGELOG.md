@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/mimshwright/dicekit/compare/v2.0.0...v2.0.1) (2023-02-07)
+
+### Bug Fixes
+
+- **cleanup:** removed old package file ([1333ea5](https://github.com/mimshwright/dicekit/commit/1333ea50a499e5d1595b306d5ee1374356d7fdf8))
+
 ## [2.0.0](https://github.com/mimshwright/dicekit/compare/v1.0.4...v2.0.0) (2023-02-07)
 
 ### ⚠ BREAKING CHANGES

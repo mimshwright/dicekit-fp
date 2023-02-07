@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/mimshwright/dicekit/compare/v1.0.4...v2.0.0) (2023-02-07)
+
+### ⚠ BREAKING CHANGES
+
+- **vite:** Entirely new build system but API should remain the same.
+
+- **vite:** converted project to a vite project ([7f2fc28](https://github.com/mimshwright/dicekit/commit/7f2fc28b63196f4edda749bfc6202ae3236dd067))
+
 ### [0.2.1](https://github.com/mimshwright/<LIBRARY>/compare/v0.2.0...v0.2.1) (2023-02-04)
 
 ## [0.2.0](https://github.com/mimshwright/<LIBRARY>/compare/v0.1.2...v0.2.0) (2023-02-04)

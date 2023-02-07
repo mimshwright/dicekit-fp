@@ -1,3 +1,5 @@
+import { describe, it, expect } from "vitest";
+
 import {
   identity,
   testRollSm,
@@ -83,16 +85,7 @@ describe("dicekit", () => {
     describe("createCustomDie()", () => {
       it("Returns a generator that maps each side to a different value.", () => {
         const weightedDie: NumberGenerator = createCustomDie([
-          1,
-          2,
-          2,
-          3,
-          3,
-          3,
-          3,
-          4,
-          4,
-          5,
+          1, 2, 2, 3, 3, 3, 3, 4, 4, 5,
         ]);
         const results = testRollMed(weightedDie);
         const count1 = count(1)(results);

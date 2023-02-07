@@ -117,93 +117,47 @@ d6(); // uses myRNG for generating numbers.
 
 TBD. Meanwhile, please review `test` folder for examples.
 
-_Below this line is boilerplate from TSDX_
+_Below this line is boilerplate from the template_
 
 =====
 
-# Library bootstrapped with TSDX
+# Vite npm package template
 
-For more info, see [tsdx.io](https://tsdx.io/)
+A template for an npm package using:
 
-## Commands
+- vite
+- typescript
+- jest
+- prettier & eslint
+- controlled commits with commitizen, lint-staged, etc.
+- & more!
 
-TSDX scaffolds your new library inside `/src`.
+Inspired by this post by [Onur Önder](https://onderonur.netlify.app/blog/creating-a-typescript-library-with-vite/)
 
-To run TSDX, use:
+## Setup
 
-```bash
-npm start # or yarn start
-```
+1. Install packages.
+1. Edit the top of the package.json file to include the correct package name and description. You can find and replace for "\<LIBRARY\>"
+1. Edit the README.md
+1. You may need to review the `vite.config.js` depending on your library structure.
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
+## Scripts
 
-To do a one-off build, use `npm run build` or `yarn build`.
+- `lint` : lint the code. You can also do `fix` to auto-fix.
+- `test` : test with jest. Also `test:coverage` and `test:watch`
+- `build` : bundle the code
+- `commit` & `release` : see below
+- `pushpub`: Used after `release` it pushes and publishes the library.
+- `deploy`: Build the demo code (index.html) and publish to gh-pages
 
-To run tests, use `npm test` or `yarn test`.
+## Commits & Releases
 
-## Configuration
+Code is automatically linted before being committed. I recommend installing the plugins for eslint and prettier in your code editor. You can attempt to fix linting issues with `yarn fix`.
 
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
+When ready to commit, please commit using `yarn commit` to use commitizen for standard format commits.
 
-### Jest
+When ready to release use `yarn release` with the `-r patch|minor|major` flag (default without the flag is `patch`).
 
-Jest tests are set up to run with `npm test` or `yarn test`.
+You'll then need to publish your changes separately. That can be done with `yarn pushpub`.
 
-You can also use `yarn test --watch` or `yarn test --coverage`
-
-### Bundle Analysis
-
-[`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
-
-### Rollup
-
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
-
-### TypeScript
-
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
-
-## Continuous Integration
-
-### GitHub Actions
-
-Two actions are added by default:
-
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [`size-limit`](https://github.com/ai/size-limit)
-
-## Optimizations
-
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
-
-// inside your code...
-if (__DEV__) {
-  console.log("foo");
-}
-```
-
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
-
-## Module Formats
-
-CJS, ESModules, and UMD module formats are supported.
-
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
-
-## Named Exports
-
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
-
-## Including Styles
-
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
-
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
-
-## Publishing to NPM
-
-We recommend using [np](https://github.com/sindresorhus/np).
+You can deploy an updated demo to github pages using `yarn deploy`

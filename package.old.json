@@ -1,0 +1,85 @@
+{
+  "name": "dicekit-fp",
+  "version": "1.0.5",
+  "license": "MIT",
+  "keywords": [
+    "functional",
+    "fp",
+    "pure",
+    "dice",
+    "die",
+    "d6",
+    "dnd",
+    "random",
+    "rng",
+    "game"
+  ],
+  "author": "Mims Wright",
+  "main": "dist/index.js",
+  "module": "dist/dicekit.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": ["dist", "src"],
+  "engines": {
+    "node": ">=15"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "publish": "npm np"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@size-limit/preset-small-lib": "^4.6.0",
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@typescript-eslint/parser": "^4.5.0",
+    "babel-jest": "^26.6.0",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.13.0",
+    "eslint-config-react-app": "^5.2.1",
+    "eslint-import-resolver-ts": "^0.4.2",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-ramda": "^2.5.1",
+    "eslint-plugin-react": "^7.21.4",
+    "eslint-plugin-react-hooks": "^4.1.2",
+    "husky": "^4.3.0",
+    "prettier": "^2.1.2",
+    "size-limit": "^4.6.0",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.0.3",
+    "typescript": "^4.0.3"
+  },
+  "optionalDependencies": {
+    "np": "^7.2.0",
+    "yarn": "^1.22.10"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": false
+  },
+  "size-limit": [
+    {
+      "path": "dist/dicekit.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/dicekit.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "dependencies": {}
+}

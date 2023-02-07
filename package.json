@@ -14,75 +14,96 @@
     "rng",
     "game"
   ],
-  "author": "Mims Wright",
-  "main": "dist/index.js",
-  "module": "dist/dicekit.esm.js",
+  "author": "Mims H. Wright",
   "typings": "dist/index.d.ts",
+  "private": false,
+  "description": "<DESCRIPTION>",
+  "homepage": "https://github.com/mimshwright/dicekit",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mimshwright/dicekit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mimshwright/dicekit/issues"
+  },
+  "type": "module",
+  "main": "./dist/dicekit.umd.cjs",
+  "module": "./dist/dicekit.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/dicekit.js",
+      "require": "./dist/dicekit.umd.cjs"
+    }
+  },
   "files": [
     "dist",
-    "src"
+    "demo"
   ],
-  "engines": {
-    "node": ">=15"
-  },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build",
-    "size": "size-limit",
-    "analyze": "size-limit --why",
-    "publish": "npm np"
+    "prepare:peers": "install-peers",
+    "prepare:husky": "husky install",
+    "prepare": "run-p prepare:*",
+    "dev": "vite",
+    "start": "run-s dev",
+    "preview": "vite preview",
+    "test": "vitest --watch false",
+    "test:watch": "vitest",
+    "test:coverage": "run-s test --coverage",
+    "test:ui": "run-s 'test:watch -- --ui'",
+    "lint:typescript": "run-s build:tsc",
+    "lint:prettier": "prettier -l .",
+    "lint:eslint": "eslint *.{t,j,cj}s{,x} --no-error-on-unmatched-pattern",
+    "lint": "run-p lint:*",
+    "fix:prettier": "run-s 'lint:prettier -- -w'",
+    "fix:eslint": "run-s 'lint:eslint -- --fix'",
+    "fix": "run-s fix:*",
+    "build:tsc": "tsc",
+    "build:vite": "vite build",
+    "build:vite:demo": "run-s 'build:vite -- -c vite.config.demo.ts'",
+    "build": "run-s build:tsc build:vite",
+    "build:demo": "run-s build:tsc build:vite:demo",
+    "commit": "cz",
+    "ci": "run-s commit",
+    "release": "standard-version",
+    "pushpub": "git push --follow-tags origin main && yarn publish",
+    "predeploy": "run-s build:demo",
+    "deploy": "gh-pages -d demo"
   },
-  "peerDependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@size-limit/preset-small-lib": "^4.6.0",
-    "@typescript-eslint/eslint-plugin": "^4.5.0",
-    "@typescript-eslint/parser": "^4.5.0",
-    "babel-jest": "^26.6.0",
-    "eslint": "^7.11.0",
-    "eslint-config-airbnb": "^18.2.0",
-    "eslint-config-prettier": "^6.13.0",
-    "eslint-config-react-app": "^5.2.1",
-    "eslint-import-resolver-ts": "^0.4.2",
-    "eslint-plugin-flowtype": "^5.2.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-ramda": "^2.5.1",
-    "eslint-plugin-react": "^7.21.4",
-    "eslint-plugin-react-hooks": "^4.1.2",
-    "husky": "^4.3.0",
-    "prettier": "^2.1.2",
-    "size-limit": "^4.6.0",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.0.3",
-    "typescript": "^4.0.3"
-  },
-  "optionalDependencies": {
-    "np": "^7.2.0",
-    "yarn": "^1.22.10"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
-  "prettier": {
-    "trailingComma": "es5",
-    "singleQuote": false
-  },
-  "size-limit": [
-    {
-      "path": "dist/dicekit.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/dicekit.esm.js",
-      "limit": "10 KB"
-    }
-  ],
-  "dependencies": {}
+    "@types/jest": "^29.2.3",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.44.0",
+    "@vitejs/plugin-react": "^3.1.0",
+    "@vitest/ui": "^0.28.4",
+    "commitizen": "^4.2.5",
+    "cz-conventional-changelog": "3.3.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-config-typescript": "^3.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-typescript": "^0.14.0",
+    "gh-pages": "^4.0.0",
+    "husky": "^8.0.2",
+    "install-peers-cli": "^2.2.0",
+    "lint-staged": "^13.0.3",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.8.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "standard-version": "^9.5.0",
+    "ts-jest": "^29.0.3",
+    "typescript": "*",
+    "vite": "^3.2.4",
+    "vite-plugin-dts": "^1.7.1",
+    "vitest": "^0.28.4"
+  }
 }

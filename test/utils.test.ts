@@ -1,3 +1,5 @@
+import { describe, it, expect } from "vitest";
+
 import {
   randomIntegerBetween,
   randomElement,
@@ -21,14 +23,16 @@ describe("test utils", () => {
   });
 
   describe("callMultipleTimes()", () => {
-    let x = 0;
-    const testFunc = () => {
-      x += 1;
-    };
+    it("Should call the function multiple times.", () => {
+      let x = 0;
+      const testFunc = () => {
+        x += 1;
+      };
 
-    callMultipleTimes(10)(testFunc);
+      callMultipleTimes(10)(testFunc);
 
-    expect(x).toBe(10);
+      expect(x).toBe(10);
+    });
   });
 
   describe("min()", () => {
@@ -99,7 +103,7 @@ describe("test utils", () => {
     describe("randomElement()", () => {
       it("Returns a random element from the array.", () => {
         const results = testRollMed(() =>
-          randomElement(Math.random)([0, 1, 2, 3, 4, 5]),
+          randomElement(Math.random)([0, 1, 2, 3, 4, 5])
         );
 
         expect(min(results)).toBe(0);

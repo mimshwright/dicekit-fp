@@ -28,12 +28,12 @@
   },
   "type": "module",
   "main": "./dist/dicekit.umd.cjs",
-  "module": "./dist/dicekit.js",
+  "module": "./dist/dicekit-fp.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/dicekit.js",
-      "require": "./dist/dicekit.umd.cjs"
+      "import": "./dist/dicekit-fp.js",
+      "require": "./dist/dicekit-fp.umd.cjs"
     }
   },
   "files": [

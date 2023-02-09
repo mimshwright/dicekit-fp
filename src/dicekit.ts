@@ -5,6 +5,7 @@ import {
   Multiplier,
   DiceTokensWithModifier,
   DiceToken,
+  Range,
 } from "./types";
 import {
   sumArray,
@@ -113,3 +114,22 @@ export const parseDiceStringWith =
   };
 
 export const parseDiceString = parseDiceStringWith(defaultRNG);
+
+const minReducer = (sum: number, [multiplier]: DiceToken) => sum + multiplier;
+const maxReducer = (sum: number, [multiplier, sides]: DiceToken) =>
+  sum + multiplier * sides;
+
+// Gets the possible range of values for a set of dice.
+export const getRange = (
+  _stringOrTokens: string | DiceTokensWithModifier
+): Range => {
+  const tokens: DiceTokensWithModifier =
+    typeof _stringOrTokens === "string"
+      ? tokenizeDiceString(_stringOrTokens)
+      : _stringOrTokens;
+  const [dice, modifier] = tokens;
+  return [
+    dice.reduce(minReducer, 0) + modifier,
+    dice.reduce(maxReducer, 0) + modifier,
+  ];
+};

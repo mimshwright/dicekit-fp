@@ -1,3 +1,9 @@
+import {
+  DiceToken,
+  NumberGenerator,
+  Modifier,
+  DiceTokensWithModifier,
+} from "./../src/types";
 import { describe, it, expect } from "vitest";
 
 import {
@@ -10,7 +16,6 @@ import {
   max,
   count,
 } from "../src/utils";
-import { NumberGenerator } from "../src/types";
 import {
   createDieWith,
   createDie,
@@ -23,10 +28,11 @@ import {
   multipleDice,
   combineDice,
   addToRoll,
+  getRange,
 } from "../src/index";
 
 describe("dicekit", () => {
-  const tbf = (f: any) => expect(f).toBeInstanceOf(Function);
+  const tbf = (f: unknown) => expect(f).toBeInstanceOf(Function);
   describe("createDieWith() &c.", () => {
     describe("Creates a die with your choice of RNG.", () => {
       it("Every random function has a version that allows you to specify the RNG.", () => {
@@ -325,6 +331,34 @@ describe("dicekit", () => {
           expect(min(result)).toBe(NaN);
           expect(max(result)).toBe(NaN);
         });
+      });
+    });
+
+    describe("getRange()", () => {
+      it("Should take a set of tokens and return the maximum and minimum values.", () => {
+        const _2d6 = [2, 6] as DiceToken;
+        const _3d8 = [3, 8] as DiceToken;
+        const _plus5 = 5 as Modifier;
+        const tokens = [[_2d6, _3d8], _plus5] as DiceTokensWithModifier;
+
+        const range = getRange(tokens);
+        expect(range[0]).toBe(2 + 3 + 5);
+        expect(range[1]).toBe(2 * 6 + 3 * 8 + 5);
+
+        const tokens2 = [[[1, 6]], -6] as DiceTokensWithModifier;
+        const range2 = getRange(tokens2);
+        expect(range2[0]).toBe(-5);
+        expect(range2[1]).toBe(0);
+
+        const k = [[], 5] as DiceTokensWithModifier;
+        const constantRange = getRange(k);
+        expect(constantRange[0]).toBe(5);
+        expect(constantRange[1]).toBe(5);
+      });
+      it("If the input value is a string instead of tokens, automatically converts to tokens.", () => {
+        const range = getRange("2d6+3d8+5");
+        expect(range[0]).toBe(2 + 3 + 5);
+        expect(range[1]).toBe(2 * 6 + 3 * 8 + 5);
       });
     });
   });

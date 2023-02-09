@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/mimshwright/dicekit/compare/v2.1.0...v2.2.0) (2023-02-09)
+
+### Features
+
+- **range:** added getRange() ([8e3fc4f](https://github.com/mimshwright/dicekit/commit/8e3fc4fd73c95f793000b2ee5e131bf6704bfa6b))
+
 ## [2.1.0](https://github.com/mimshwright/dicekit/compare/v2.0.1...v2.1.0) (2023-02-07)
 
 ### Bug Fixes

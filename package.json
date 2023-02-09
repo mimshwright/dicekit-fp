@@ -1,6 +1,6 @@
 {
   "name": "dicekit-fp",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "license": "MIT",
   "keywords": [
     "functional",
@@ -65,6 +65,7 @@
     "build:demo": "run-s build:tsc build:vite:demo",
     "commit": "cz",
     "ci": "run-s commit",
+    "prerelease": "run-s build",
     "release": "standard-version",
     "pushpub": "git push --follow-tags origin main && yarn publish",
     "predeploy": "run-s build:demo",

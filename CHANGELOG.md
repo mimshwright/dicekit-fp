@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/mimshwright/dicekit/compare/v2.2.1...v2.3.0) (2023-02-14)
+
+### Features
+
+- **tokentostring:** made the tokenize function public and added a way to convert back to strings ([68524c9](https://github.com/mimshwright/dicekit/commit/68524c9c00e85b90fcc3ba2f0e5c34786e4ff056))
+
 ### [2.2.1](https://github.com/mimshwright/dicekit/compare/v2.2.0...v2.2.1) (2023-02-09)
 
 ## [2.2.0](https://github.com/mimshwright/dicekit/compare/v2.1.0...v2.2.0) (2023-02-09)

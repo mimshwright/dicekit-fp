@@ -67,7 +67,9 @@ export const createCustomDieWith =
   };
 export const createCustomDie = createCustomDieWith(defaultRNG);
 
-const tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
+export const tokenizeDiceString = (
+  diceString: string
+): DiceTokensWithModifier => {
   const sanitized = diceString
     .toLowerCase() // make case uniform
     .replace(/\s/g, "") // remove whitespace
@@ -78,7 +80,7 @@ const tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
   // filter out dice tokens
   const diceTokenStrings = tokens
     .filter((s) => s.includes("d")) // dice tokens contain a "d"
-    .map((s) => s.replace(/^d/g, "1d")); // add an implicit 1 to any dice without multipliers
+    .map((s) => s.replace(/^d/g, "+1d")); // add an implicit 1 to any dice without multipliers
 
   // filter out modifier tokens
   const modifierTokens = tokens
@@ -96,6 +98,12 @@ const tokenizeDiceString = (diceString: string): DiceTokensWithModifier => {
   // return a tuple containing the dice token array and the modifier.
   return [diceTokens, modifier];
 };
+
+export const tokensToString = (tokens: DiceTokensWithModifier): string =>
+  (
+    tokens[0].reduce((s, [count, sides]) => `${s}+${count}d${sides}`, ``) +
+    `+${tokens[1]}`
+  ).substring(1);
 
 export const parseDiceStringWith =
   (r: NumberGenerator) =>

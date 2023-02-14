@@ -29,6 +29,8 @@ import {
   combineDice,
   addToRoll,
   getRange,
+  tokensToString,
+  tokenizeDiceString,
 } from "../src/index";
 
 describe("dicekit", () => {
@@ -331,6 +333,31 @@ describe("dicekit", () => {
           expect(min(result)).toBe(NaN);
           expect(max(result)).toBe(NaN);
         });
+      });
+    });
+
+    describe("tokenizeDiceString()", () => {
+      it("Converts strings to tokens", () => {
+        expect(tokenizeDiceString("3d6+1+d8+1")).toMatchObject([
+          [
+            [3, 6],
+            [1, 8],
+          ],
+          2,
+        ]);
+      });
+    });
+
+    describe("tokensToString()", () => {
+      it("Converts tokens back to strings", () => {
+        const _3d6plus1d8plus2 = [
+          [
+            [3, 6],
+            [1, 8],
+          ],
+          2,
+        ] as DiceTokensWithModifier;
+        expect(tokensToString(_3d6plus1d8plus2)).toBe("3d6+1d8+2");
       });
     });
 

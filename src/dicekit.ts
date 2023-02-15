@@ -92,18 +92,41 @@ export const tokenizeDiceString = (
     (dieToken) => dieToken.split("d").map((s) => parseInt(s, 10)) as DiceToken
   );
 
+  const reducedDiceTokens: DiceToken[] = Object.entries(
+    diceTokens.reduce(
+      (sideMap: Record<number, number>, [count, sides]: DiceToken) => ({
+        ...sideMap,
+        [sides]: (sideMap[sides] ?? 0) + count,
+      }),
+      {}
+    )
+  ).map(
+    // convert index string to number and flip back
+    ([count, sides]: [string, number]) => [sides, parseInt(count, 10)]
+  );
+
   // Reduce the modifier to one number
   const modifier: Modifier = sumArray(modifierTokens);
 
   // return a tuple containing the dice token array and the modifier.
-  return [diceTokens, modifier];
+  return [reducedDiceTokens, modifier];
 };
 
-export const tokensToString = (tokens: DiceTokensWithModifier): string =>
+const dieTokenToString = (s: string, [count, sides]: DiceToken) =>
+  `${s}+${count}d${sides}`;
+export const tokensToString = ([
+  dice,
+  modifier,
+]: DiceTokensWithModifier): string =>
   (
-    tokens[0].reduce((s, [count, sides]) => `${s}+${count}d${sides}`, ``) +
-    `+${tokens[1]}`
+    dice.reduce(dieTokenToString, ``) + (modifier > 0 ? `+${modifier}` : ``)
   ).substring(1);
+
+export const simplifyDiceString = (input: string): string => {
+  const simplified = tokensToString(tokenizeDiceString(input));
+  if (simplified.indexOf("NaN") >= 0) return input;
+  return simplified;
+};
 
 export const parseDiceStringWith =
   (r: NumberGenerator) =>

@@ -31,6 +31,7 @@ import {
   getRange,
   tokensToString,
   tokenizeDiceString,
+  simplifyDiceString,
 } from "../src/index";
 
 describe("dicekit", () => {
@@ -358,6 +359,18 @@ describe("dicekit", () => {
           2,
         ] as DiceTokensWithModifier;
         expect(tokensToString(_3d6plus1d8plus2)).toBe("3d6+1d8+2");
+      });
+    });
+
+    describe("simplifyDiceString()", () => {
+      it("Converts a dicestring into a cleaned up dice string", () => {
+        expect(simplifyDiceString("2D6 +d8 + 4 -1+1d6 ")).toBe("3d6+1d8+3");
+        expect(simplifyDiceString("d6+d6+d6")).toBe("3d6");
+        expect(simplifyDiceString("1")).toBe("1");
+        expect(simplifyDiceString("")).toBe("");
+      });
+      it("passes through errors unchanged", () => {
+        expect(simplifyDiceString("3dd3")).toBe("3dd3");
       });
     });
 

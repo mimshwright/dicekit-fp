@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/mimshwright/dicekit/compare/v2.3.0...v2.4.0) (2023-02-15)
+
+### Features
+
+- **simplifydicestring:** added the ability to convert a dice string into a simplified version ([437781d](https://github.com/mimshwright/dicekit/commit/437781d88bf7fe5c9904cf5ea9a43abc68ce0a22))
+
 ## [2.3.0](https://github.com/mimshwright/dicekit/compare/v2.2.1...v2.3.0) (2023-02-14)
 
 ### Features
